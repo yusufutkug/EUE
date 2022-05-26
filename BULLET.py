@@ -20,4 +20,6 @@ class Bullet(pg.sprite.Sprite):
         self.rect.center = self.pos  # Update the rect pos.
         if self.rect.bottom <= 0 or self.health<=0:
             self.kill()
+    def get_damage(self):
+        return self.damage
 

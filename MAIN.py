@@ -3,6 +3,8 @@ import random,sys
 from ARMY import *
 from HEROS import *
 from SKILLS import *
+from ITEMS import *
+from INVENTORY import *
 
 class Game:
     __background = pg.image.load("bg5.12.jpg")
@@ -21,14 +23,20 @@ class Game:
         self.hero_bullets = pg.sprite.Group()
         self.enemy_bullets = pg.sprite.Group()
         self.player = pg.sprite.Group()
+        self.item_sprite =pg.sprite.Group()
+        self.wallet_sprite=pg.sprite.Group()
         self.Hero=Tank((self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player)
         self.score=0
         self.bgspeed=0.4
-        self.army=Army(self.all_sprites,self.enemy_bullets, self.enemies,self.__screen)
+        self.army=Army(self.all_sprites,self.enemy_bullets, self.enemies,self.__screen,self.hero_bullets)
         self.done = False
+        self.item1=Speed_of_Bullet(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen)
+        self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen)
         self.atack_skill=atack_skill(self.all_sprites,self.skills_sprite)
         self.defense_skill=defense_skill(self.all_sprites,self.skills_sprite)
         self.entry_music=pg.mixer.music.load("storm-night.ogg")
+        self.wallet = Wallet(self.all_sprites,self.wallet_sprite,self.__screen,self.font)
+
 
     def entry_screen(self):
         pygame.mixer.music.play
@@ -69,7 +77,7 @@ class Game:
         pygame.mixer.music.load("Mega Bot Bay.ogg")
         pygame.mixer.music.play()
         while not self.Hero.hero_death and not self.done:
-            # dt = time since last tick in milliseconds.
+
             if not pygame.mixer.music.get_busy():
                 pygame.mixer.music.play()
             dt = self.clock.tick(60)/1000
@@ -83,11 +91,16 @@ class Game:
     def play_again(self):
         while True:
             pass
+
     def handle_events(self):
+
         for event in pg.event.get():
+
             if event.type == pg.QUIT:
                 self.done = True
+
             elif event.type==pg.KEYDOWN:
+
                     if event.key==pg.K_e:
                         pygame.mixer.Sound("mixkit-robot-system-fail-2960.wav").play()
                         self.atack_skill.key_check(True)        
@@ -97,23 +110,19 @@ class Game:
                         self.defense_skill.key_check(True)
                         self.Hero.keyCheck("q")
 
+    def update_score_coins(self):
 
-
+        self.score=self.army.send_score()
+        self.bgspeed=0.4+(self.score//10)**(1/2)
+        self.wallet.update_wallet(self.army.send_coins())
+    
     def run_logic(self, dt):
+
         self.all_sprites.update(dt)
-        hits = pg.sprite.groupcollide(self.enemies, self.hero_bullets, False, True)
+        self.army.update()
+        self.update_score_coins()
         enemy_Hero=pg.sprite.groupcollide(self.player,self.enemies,False,True)
-        hero_bullet=pg.sprite.groupcollide(self.player,self.enemy_bullets,False,True)
-        # bullets=pg.sprite.groupcollide(self.enemy_bullets,self.hero_bullets,False,True)
-        # for enemy_bullet, bullet_list in bullets.items():
-        #     for bullet in bullet_list:
-        #         enemy_bullet.health -= bullet.damage
-        for enemy, bullet_list in hits.items():
-            for bullet in bullet_list:
-                enemy.health -= bullet.damage
-                if enemy.health<=0:
-                    self.score+=enemy.score
-                    self.bgspeed=0.4+self.score/100
+        hero_bullet=pg.sprite.groupcollide(self.player,self.enemy_bullets,False,True)                
         for hero, enemy_list in enemy_Hero.items():
             for enemy in enemy_list:
                 hero.health -= enemy.damage
@@ -122,18 +131,20 @@ class Game:
                 hero.health -= bullet.damage
         if len(self.enemies.sprites())==0:
             self.army.creating_army(self.bgspeed)
+
     def update_background(self,speed:float):
         self.__screen.blit(self.__background, (0, self.__bgX))
         self.__screen.blit(self.__background, (0, self.__bgX2))
-        self.__bgX +=speed
-        self.__bgX2 +=speed
+        self.__bgX +=speed/2
+        self.__bgX2 +=speed/2
         if self.__bgX >= self.__window_height:
             self.__bgX = -self.__background.get_height() + self.__bgX2 + 2
         elif self.__bgX2 >= self.__window_height:
             self.__bgX2 = -self.__background.get_height() + self.__bgX + 2
+
     def draw(self):
         score_label= self.font.render(f"SCORE: {self.score}", 1, (255, 255, 255))
-        self.__screen.blit(score_label,(50,50))
+        self.__screen.blit(score_label,(0,0))
         self.all_sprites.draw(self.__screen)
         pg.display.flip()
 

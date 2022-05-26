@@ -16,7 +16,7 @@ class Enemy(pg.sprite.Sprite):
         self.bullet_timer = 3
         self.bullet_time= 3
         self.damage = self.health
-        self.vel=(0,60*int(speed**(1/2)))
+        self.vel=(0,80*int(speed**(1/2)))
         if self.vel[1]>=300:
                 self.vel=(0,300)
         self.bullet_damage = 10
@@ -39,8 +39,8 @@ class Enemy(pg.sprite.Sprite):
     def update(self, dt):
         if not self.dead:
             hits = pg.sprite.spritecollide(self, self.hero_bullets,True)
-            if len(hits)==1:
-                self.health-=hits[0].get_damage()
+            for bullet in hits:
+                self.health-=bullet.get_damage()
             self.fire(dt,self.speed)
             if self.health <= 0:
                 self.dead=True
@@ -79,6 +79,14 @@ class Enemy(pg.sprite.Sprite):
             return (int(self.score),int(self.coins))
         else:
             return (0,0)
+    
+    def get_damage(self):
+
+        return self.health
+
+    def get_pos(self):
+
+        return self.rect.center
 
 class Enemy1(Enemy):
 
@@ -94,7 +102,7 @@ class Enemy1(Enemy):
         self.bullet_health = 12 * int(speed**(1/2))
         self.bullet_time = 3*(1/(int(speed**(1/2))))
         self.score = int(3*int(speed**(1/2)))
-        self.coins=1
+        self.coins=int(speed**(1/4))
 
 
 class Enemy2(Enemy):
@@ -111,7 +119,7 @@ class Enemy2(Enemy):
         self.bullet_health = 16 * int(speed**(1/2))
         self.bullet_time = 1*(1/int(speed**(1/2)))
         self.score=int(7*int(speed**(1/2)))
-        self.coins=2
+        self.coins=int(2*int(speed**(1/4)))
 
 
 class Enemy3(Enemy):
@@ -128,4 +136,4 @@ class Enemy3(Enemy):
         self.bullet_health=20*int(speed**(1/2))
         self.bullet_time = 1*(1/(int(speed**(1/2))))
         self.score=int(10*int(speed**(1/2)))
-        self.coins=3
+        self.coins=int(3*int(speed**(1/4)))

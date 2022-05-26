@@ -1,4 +1,5 @@
 import pygame
+from sympy import re
 
 class Skills(pygame.sprite.Sprite):
 
@@ -43,6 +44,12 @@ class Skills(pygame.sprite.Sprite):
              return True
         else:
             return False
+    def get_cooldown(self):
+
+        if self.cooldown:
+            return False
+        else: 
+           return True
 
 class defense_skill(Skills):
 
@@ -66,7 +73,7 @@ class defense_skill(Skills):
         self.cor = (100, 780)
         self.rect = self.image.get_rect(bottomleft=self.cor)
         self.cooldown = False
-        self.cooldown_time = 10
+        self.cooldown_time = 25
         self.wait_time=0.09
 
 
@@ -98,5 +105,6 @@ class atack_skill(Skills):
         self.cor=(1400, 780)
         self.rect = self.image.get_rect(bottomleft=self.cor)
         self.cooldown = False
-        self.cooldown_time = 10
+        self.cooldown_time = 30
         self.wait_time=0.2
+   

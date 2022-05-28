@@ -5,7 +5,7 @@ from HEROS import *
 from SKILLS import *
 from ITEMS import *
 from INVENTORY import *
-from DROPS import *
+
 
 
 class Game:

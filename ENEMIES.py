@@ -77,11 +77,12 @@ class Enemy(pg.sprite.Sprite):
                 Bullet((self.rect.center[0],self.rect.center[1]+50), self.bullet_image,self.vel,self.bullet_damage, self.all_sprites, self.bullets,self.bullet_health)
                 self.bullet_timer=self.bullet_time
 
-    def move(self,art):
+    def move(self,x,y):
 
-        self.x+=art
-        y=35*math.sin(self.x)
-        x=self.x+3*art
+        #self.x+=art
+        #y=35*func(self.x)
+        #x=self.x+3*art
+
         self.rect.center=(self.center[0]+5*x,self.center[1]-y)
         if self.rect.center[0]>=self.screen.get_width()-100:
             self.contact=True

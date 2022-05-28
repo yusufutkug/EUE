@@ -4,10 +4,11 @@ import pygame as pg
 class Drops(pg.sprite.Sprite):
 
 
-    def __init__(self,pos,all_sprites,drop_sprite,screen) -> None:
+    def __init__(self,pos,all_sprites,drop_sprite,hero_bullets,screen) -> None:
         super(Drops,self).__init__(drop_sprite)
         self.all_sprites=all_sprites
         self.add(self.all_sprites)
+        self.hero_bullets=hero_bullets
         self.image=pg.Surface((20,30),10)
         self.image.fill((255,0,0))
         self.center=pos
@@ -15,9 +16,16 @@ class Drops(pg.sprite.Sprite):
         self.x=0
         self.screen=screen
         self.screenWidth=self.screen.get_width()
+        self.health=0
+        
     
     def update(self,dt):
-        x=int(self.x)
+        hero_bullet=pg.sprite.spritecollide(self,self.hero_bullets,True)
+        for i in hero_bullet:
+            self.health+=1
+        if self.health>=2:
+            self.kill()
+        x=self.x
         if self.screenWidth//2<self.center[0]:
             y=int((1/200)*self.x**3-7*self.x)
             self.rect.center=(self.center[0]+2*x,self.center[1]-y)
@@ -39,8 +47,8 @@ class Drops(pg.sprite.Sprite):
 class Power_Upp(Drops):
 
 
-    def __init__(self, pos, all_sprites, drop_sprite,screen) -> None:
-        super(Power_Upp,self).__init__(pos, all_sprites, drop_sprite,screen)
+    def __init__(self, pos, all_sprites, drop_sprite,hero_bullets,screen) -> None:
+        super(Power_Upp,self).__init__(pos, all_sprites, drop_sprite,hero_bullets,screen)
         self.image.fill((255,0,0))
         self.effect=1
         self.me="power"
@@ -49,8 +57,8 @@ class Power_Upp(Drops):
 class Health_Upp(Drops):
 
 
-    def __init__(self, pos, all_sprites, drop_sprite, screen) -> None:
-        super().__init__(pos, all_sprites, drop_sprite, screen)
+    def __init__(self, pos, all_sprites, drop_sprite,hero_bullets, screen) -> None:
+        super().__init__(pos, all_sprites, drop_sprite,hero_bullets, screen)
         self.image.fill((0,0,255))
         self.effect=15
         self.me="health"

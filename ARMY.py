@@ -1,3 +1,4 @@
+from numpy import mat
 from scipy import rand
 import math
 from ENEMIES import *
@@ -17,22 +18,25 @@ class Army():
         self.screen=screen
         self.score=0
         self.coins=0
-        self.art=0.05
+        self.art=0.04
+        self.x=0
         self.enemies=[]
         self.drop_numbers=random.randint(0,3)
 
-    def update(self):
-
+    def update(self,):
+        self.x+=self.art
+        y=35*math.sin(self.x)
+        x=self.x+3*self.art
         for enemy in self.enemies:
             if self.get_score(enemy):
-                if random.choice([0,0,0,1]):
+                if random.choice([0,0,0,0,0,1]):
                     self.creating_drop(enemy)
                 self.enemies.remove(enemy)
-            self.move_army(enemy,self.art)
+            self.move_army(enemy,x,y)
             self.Did_touch_enemy(enemy)
 
     def creating_army(self,speed):
-        self.drop_numbers=random.randint(0,2)
+        self.drop_numbers=random.randint(0,3)
         self.speed = speed + 0.6
         self.enemies_list = Enemy.__subclasses__()
         self.enemies = []
@@ -45,16 +49,16 @@ class Army():
     def creating_drop(self,enemy):
         my_drops=Drops.__subclasses__()
         if self.drop_numbers>=1:
-            random.choice(my_drops)((enemy.get_pos()),self.all_sprites,self.drop_sprite,self.screen)
+            random.choice(my_drops)((enemy.get_pos()),self.all_sprites,self.drop_sprite,self.hero_bullets,self.screen)
             self.drop_numbers-=1
 
     def Did_touch_enemy(self,enemy):
         if enemy.Did_touch():
             self.art*= -1
 
-    def move_army(self,enemy,art):
+    def move_army(self,enemy,x,y):
 
-        enemy.move(art)
+        enemy.move(x,y)
 
     
     def get_score(self,enemy):

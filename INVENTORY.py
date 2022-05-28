@@ -1,5 +1,6 @@
 import pygame
 
+#artış fonksiyon
 
 class Wallet(pygame.sprite.Sprite):
 

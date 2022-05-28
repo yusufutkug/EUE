@@ -17,19 +17,19 @@ class Army():
         self.screen=screen
         self.score=0
         self.coins=0
-        self.x=0
-        self.art=0.1
+        self.art=0.05
         self.enemies=[]
         self.drop_numbers=random.randint(0,3)
 
-
     def update(self):
+
         for enemy in self.enemies:
             if self.get_score(enemy):
                 if random.choice([0,0,0,1]):
                     self.creating_drop(enemy)
                 self.enemies.remove(enemy)
-            self.move_army(enemy,math.sin)
+            self.move_army(enemy,self.art)
+            self.Did_touch_enemy(enemy)
 
     def creating_army(self,speed):
         self.drop_numbers=random.randint(0,2)
@@ -48,11 +48,13 @@ class Army():
             random.choice(my_drops)((enemy.get_pos()),self.all_sprites,self.drop_sprite,self.screen)
             self.drop_numbers-=1
 
+    def Did_touch_enemy(self,enemy):
+        if enemy.Did_touch():
+            self.art*= -1
 
+    def move_army(self,enemy,art):
 
-    def move_army(self,enemy,fonksiyon):
-        print(fonksiyon(5))
-        enemy.move()
+        enemy.move(art)
 
     
     def get_score(self,enemy):

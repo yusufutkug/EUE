@@ -7,6 +7,10 @@ from ITEMS import *
 from INVENTORY import *
 from DROPS import *
 
+#attribute isimleri
+#sprite class diagram
+#fonksiyon içine fonksiyon yazma
+
 class Game:
     __background = pg.image.load("bg5.12.jpg")
     __window_width, __window_height = 1536, 864
@@ -42,7 +46,7 @@ class Game:
 
     def entry_screen(self):
         pg.mixer.music.load("storm-night.ogg")
-        pygame.mixer.music.play
+        pg.mixer.music.play
         left_icon = pg.image.load("left-arrow.png")
         right_icon = pg.image.load("right-arrow.png")
         font1 = pg.font.SysFont('berlinsansfbkalın', 70)
@@ -76,7 +80,9 @@ class Game:
                 self.__screen.blit(i,j)
             self.Hero.draw_hero(self.__screen,self.font)
             pg.display.flip()
+
     def run(self):
+
         pygame.mixer.music.load("Mega Bot Bay.ogg")
         pygame.mixer.music.play()
         while not self.Hero.hero_death:
@@ -89,11 +95,7 @@ class Game:
             self.run_logic(dt)
             self.draw()
         self.updateFile(self.score)
-        # self.play_again()
-
-    def play_again(self):
-        while True:
-            pass
+        self.play_again()
 
     def handle_events(self):
 
@@ -106,9 +108,11 @@ class Game:
 
                     if event.key==pg.K_e:
                         self.Hero.keyCheck("e",self.atack_skill.get_cooldown())
-                        self.atack_skill.key_check(True)        
-                        
-                        
+                        self.atack_skill.key_check(True)  
+
+                    elif event.key==pg.K_ESCAPE:
+                        self.pause()    
+                         
                     elif event.key==pg.K_q:
                         self.Hero.keyCheck("q",self.defense_skill.get_cooldown())
                         self.defense_skill.key_check(True)
@@ -140,6 +144,7 @@ class Game:
         self.item2.Canbebought(self.wallet.my_coins())        
         if len(self.enemies.sprites())==0:
             self.army.creating_army(self.bgspeed)
+        
 
     def update_background(self,speed:float):
         self.__screen.blit(self.__background, (0, self.__bgX))
@@ -172,9 +177,43 @@ class Game:
             return score
 
         return last
+    
+    def pause(self):
+
+        font=pg.font.SysFont('ocraextended', 80)
+        text=font.render('Come on!!!', True, (255, 255, 255))
+        rect=text.get_rect(center=(self.__screen.get_width()//2,self.__screen.get_height()//2))
+        self.__screen.blit(text,rect)
+        pg.display.flip()
+        check=True
+        while check:
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        check=False
+
+    def play_again(self):
+
+        font=pg.font.SysFont('ocraextended', 100)
+        text=font.render('GAME OVER', True, (255, 255, 255))
+        rect=text.get_rect(center=(self.__screen.get_width()//2,self.__screen.get_height()//2))
+        self.__screen.blit(text,rect)
+        pg.display.flip()
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    return sys.exit()
+                elif event.type == pg.KEYDOWN:
+                    if event.key == pg.K_RETURN:
+                        self.__init__()
+                        self.entry_screen()
+
+
 
 if __name__ == '__main__':
+
     pg.init()
     pg.mouse.set_visible(False)
-    Game().entry_screen()
+    EUE=Game()
+    EUE.entry_screen()
     pg.quit()

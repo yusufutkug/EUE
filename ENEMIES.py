@@ -37,6 +37,7 @@ class Enemy(pg.sprite.Sprite):
         self.coins=0
         self.x=0
         self.art=0.01
+        self.contact=False
         
         
         
@@ -50,9 +51,9 @@ class Enemy(pg.sprite.Sprite):
             if self.health <= 0:
                 self.dead=True
                 self.explosion.play()
-            self.move()
        
         else:
+
             self.animation()
             
 
@@ -76,25 +77,28 @@ class Enemy(pg.sprite.Sprite):
                 Bullet((self.rect.center[0],self.rect.center[1]+50), self.bullet_image,self.vel,self.bullet_damage, self.all_sprites, self.bullets,self.bullet_health)
                 self.bullet_timer=self.bullet_time
 
-    def move(self):
+    def move(self,art):
 
-        #self.rect.centery=self.center[1]
-        #self.rect.centerx=self.center[0]
-        
-        x=self.x
-        y=50*math.sin(x)
+        self.x+=art
+        y=35*math.sin(self.x)
+        x=self.x+3*art
         self.rect.center=(self.center[0]+5*x,self.center[1]-y)
-        if self.rect.center[0]>=self.screen.get_width()-200:
-           self.art=-0.01
-        elif self.rect.center[0]<=200:
-            self.art=0.01
+        if self.rect.center[0]>=self.screen.get_width()-100:
+            self.contact=True
+        elif self.rect.center[0]<=100:
+            self.contact=True   
         if self.rect.center[1]< 50:
             pass
         elif self.rect.center[1]> self.screen.get_height()-400:
             pass
-        self.x+=self.art
-  
         
+  
+    def Did_touch(self):
+        if self.contact:
+            self.contact=False
+            return True
+        else:
+            return False
 
     def get_score_coin(self) -> int:
         if self.dead:

@@ -7,12 +7,9 @@ from ITEMS import *
 from INVENTORY import *
 from DROPS import *
 
-#attribute isimleri
-#sprite class diagram
-#fonksiyon içine fonksiyon yazma
 
 class Game:
-    __background = pg.image.load("bg5.12.jpg")
+    __background = pg.image.load("image\\bg5.12.jpg")
     __window_width, __window_height = 1536, 864
     __window_size = (__window_width, __window_height)
     __bgX = -__background.get_height() + __window_height
@@ -45,10 +42,10 @@ class Game:
 
 
     def entry_screen(self):
-        pg.mixer.music.load("storm-night.ogg")
+        pg.mixer.music.load("sound\\storm-night.ogg")
         pg.mixer.music.play
-        left_icon = pg.image.load("left-arrow.png")
-        right_icon = pg.image.load("right-arrow.png")
+        left_icon = pg.image.load("image\\left-arrow.png")
+        right_icon = pg.image.load("image\\right-arrow.png")
         font1 = pg.font.SysFont('berlinsansfbkalın', 70)
         game_name = font1.render("Endless Universe Expedition", True, (128, 0, 0))
         game_name_rect = game_name.get_rect(center = (self.__window_width // 2, self.__window_height // 6))
@@ -83,7 +80,7 @@ class Game:
 
     def run(self):
 
-        pygame.mixer.music.load("Mega Bot Bay.ogg")
+        pygame.mixer.music.load("sound\\Mega Bot Bay.ogg")
         pygame.mixer.music.play()
         while not self.Hero.hero_death:
 

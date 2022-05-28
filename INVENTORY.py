@@ -7,7 +7,7 @@ class Wallet(pygame.sprite.Sprite):
  
     def __init__(self,all_sprite, wallet_sprite,screen,font) -> None:
         super(Wallet,self).__init__(wallet_sprite)
-        self.image=pygame.image.load("coin.png")
+        self.image=pygame.image.load("image\\coin.png")
         self.coins=0
         self.all_sprites=all_sprite
         self.add(self.all_sprites)

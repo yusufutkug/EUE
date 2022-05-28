@@ -11,7 +11,7 @@ class Item(pg.sprite.Sprite):
         self.increase = 0
         self.all_sprites=all_sprites
         self.add(self.all_sprites)
-        self.image=pg.image.load("label.png")
+        self.image=pg.image.load("image\\label1.png")
         self.rect=self.image.get_rect(topright=(screen.get_width(),100))
         self.name=None
         self.screen=screen
@@ -54,7 +54,6 @@ class Speed_of_Shooting(Item):
             super(Speed_of_Shooting, self).__init__(speed,all_sprites,items_sprite,screen)
             self.fee = int(40*(speed**(1/2)))//10*10
             self.increase = 0.1
-            self.image=pg.image.load("label1.png")
             self.rect=self.image.get_rect(topright=(screen.get_width(),70))
             self.name="Speed of Shooting"
             self.canbebought=False
@@ -68,7 +67,6 @@ class Shooting_Power(Item):
             super(Shooting_Power, self).__init__(speed,all_sprites,items_sprite,screen)
             self.fee = int(40*(speed**(1/2)))//10*10
             self.increase = int(5*int(speed**(1/4)))
-            self.image=pg.image.load("label1.png")
             self.rect=self.image.get_rect(topright=(screen.get_width(),144))
             self.name="Shooting Power"
             self.effect="damage"

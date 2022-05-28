@@ -56,12 +56,12 @@ class defense_skill(Skills):
 
     def __init__(self,all_sprites,skills_sprite):
         super(defense_skill, self).__init__(all_sprites,skills_sprite)
-        self.image_list = [pygame.image.load("shield.png")]
+        self.image_list = [pygame.image.load("image\\shield.png")]
                           # pygame.image.load("shield2.png"),pygame.image.load("shield2.png"),pygame.image.load("shield1.png")]
                            # pygame.image.load("shield4.png"), pygame.image.load("shield5.png"),
                            # pygame.image.load("shield6.png"), pygame.image.load("shield5.png"),
                            # pygame.image.load("shield4.png"), pygame.image.load("shield3.png"), pygame.image.load("shield2.png"), pygame.image.load("shield1.png"), pygame.image.load("shield.png")]
-        self.image_cooldown =  [pygame.image.load("pshield.png")]
+        self.image_cooldown =  [pygame.image.load("image\\pshield.png")]
                            # pygame.image.load("pshield2.png"), pygame.image.load("pshield3.png"),
                            # pygame.image.load("pshield4.png"), pygame.image.load("pshield5.png"),
                            # pygame.image.load("pshield6.png"), pygame.image.load("pshield5.png"),
@@ -83,22 +83,22 @@ class atack_skill(Skills):
 
     def __init__(self,all_sprites,skills_sprite):
         super(atack_skill, self).__init__(all_sprites,skills_sprite)
-        self.image_list = [pygame.image.load("kılıç1.png"), pygame.image.load("kılıç2.png"),
-                           pygame.image.load("kılıç3.png"), pygame.image.load("kılıç4.png"),
-                           pygame.image.load("kılıç5.png"), pygame.image.load("kılıç5.png"),
-                           pygame.image.load("kılıç4.png"), pygame.image.load("kılıç3.png"),
-                           pygame.image.load("kılıç2.png")]
-        self.image_cooldown = [pygame.image.load("ışın.png"), pygame.image.load("ışın2.png"),
-                               pygame.image.load("ışın3.png"),
-                               pygame.image.load("ışın4.png"), pygame.image.load("ışın5.png"),
-                               pygame.image.load("ışın6.png"),
-                               pygame.image.load("ışın7.png"), pygame.image.load("ışın8.png"),
-                               pygame.image.load("ışın8.png"),
-                               pygame.image.load("ışın7.png"), pygame.image.load("ışın6.png"),
-                               pygame.image.load("ışın5.png"),
-                               pygame.image.load("ışın4.png"), pygame.image.load("ışın3.png"),
-                               pygame.image.load("ışın2.png"),
-                               pygame.image.load("ışın.png")]
+        self.image_list = [pygame.image.load("image\\kılıç1.png"), pygame.image.load("image\\kılıç2.png"),
+                           pygame.image.load("image\\kılıç3.png"), pygame.image.load("image\\kılıç4.png"),
+                           pygame.image.load("image\\kılıç5.png"), pygame.image.load("image\\kılıç5.png"),
+                           pygame.image.load("image\\kılıç4.png"), pygame.image.load("image\\kılıç3.png"),
+                           pygame.image.load("image\\kılıç2.png")]
+        self.image_cooldown = [pygame.image.load("image\\ışın.png"), pygame.image.load("image\\ışın2.png"),
+                               pygame.image.load("image\\ışın3.png"),
+                               pygame.image.load("image\\ışın4.png"), pygame.image.load("image\\ışın5.png"),
+                               pygame.image.load("image\\ışın6.png"),
+                               pygame.image.load("image\\ışın7.png"), pygame.image.load("image\\ışın8.png"),
+                               pygame.image.load("image\\ışın8.png"),
+                               pygame.image.load("image\\ışın7.png"), pygame.image.load("image\\ışın6.png"),
+                               pygame.image.load("image\\ışın5.png"),
+                               pygame.image.load("image\\ışın4.png"), pygame.image.load("image\\ışın3.png"),
+                               pygame.image.load("image\\ışın2.png"),
+                               pygame.image.load("image\\ışın.png")]
 
         self.current_image = 0
         self.image = self.image_list[self.current_image]

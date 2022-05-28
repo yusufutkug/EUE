@@ -9,7 +9,7 @@ class Heros(pg.sprite.Sprite):
         super(Heros, self).__init__(sprite_groups)
         self.hero_death=False
         self.cor=pos
-        self.image_list=[pg.image.load("hr3.png"),pg.image.load("hr2.png"),pg.image.load("hr1.png"),pg.image.load("hr4.png"),pg.image.load("hr1.png"),pg.image.load("hr2.png"),pg.image.load("hr3.png")]
+        self.image_list=[pg.image.load("image\\hr1.png"),pg.image.load("image\\hr4.png"),pg.image.load("image\\hr1.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr3.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr1.png")]
         self.current_image=0
         self.image = self.image_list[self.current_image]
         self.rect = self.image.get_rect(center=self.cor)
@@ -29,10 +29,10 @@ class Heros(pg.sprite.Sprite):
         self.bullet_damage=15
         self.bullet_vel=(0,-300)
         self.current_animated=0
-        self.animated=[pg.image.load("Untitled (1).png"),pg.image.load("Untitled (2).png"),pg.image.load("Untitled (3).png")]
+        self.animated=[pg.image.load("image\\Untitled (1).png"),pg.image.load("image\\Untitled (2).png"),pg.image.load("image\\Untitled (3).png")]
         self.atackSkill=False
         self.defenseSkill=False
-        self.laser_sound = pg.mixer.Sound('laser.wav')
+        self.laser_sound = pg.mixer.Sound('sound\\laser.wav')
         self.laser_sound.set_volume(0.3)
         self.amIGhost=False
         self.firex=1
@@ -85,7 +85,7 @@ class Heros(pg.sprite.Sprite):
             if len(drop_Hero)==1:
                 self.welcome_drop(drop_Hero[0].get_effect())
             self.move()
-            self.animation()
+        #   self.animation()
             self.fire(dt,self.cor,self.firex)
             self.healthbar(self.screen)
             self.atack_skill(dt)
@@ -107,6 +107,7 @@ class Heros(pg.sprite.Sprite):
         screen.blit(self.image,self.rect)
         self.animation()
         screen.blit(hero_name,hero_name_rect)
+
 
     def get_width(self):
         return self.image.get_width()
@@ -168,7 +169,7 @@ class Heros(pg.sprite.Sprite):
 
     def keyCheck(self,key,bool):
         if key=="e" and bool:
-            pg.mixer.Sound("mixkit-robot-system-fail-2960.wav").play()
+            pg.mixer.Sound("sound\\mixkit-robot-system-fail-2960.wav").play()
             self.atackSkill=True
         elif key=="q" and bool:
             self.defenseSkill=True
@@ -180,7 +181,7 @@ class Tank(Heros):
 
     def __init__(self, pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops):
         super(Tank, self).__init__( pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops)
-        self.image_list = [pg.image.load("hr1.png"),pg.image.load("hr4.png"),pg.image.load("hr1.png"), pg.image.load("hr2.png"), pg.image.load("hr3.png"), pg.image.load("hr2.png"), pg.image.load("hr1.png")]
+        self.image_list =[pg.image.load("image\\hr1.png"),pg.image.load("image\\hr4.png"),pg.image.load("image\\hr1.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr3.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr1.png")]
         self.current_image = 0
         self.image = self.image_list[self.current_image]
         self.image.convert()
@@ -219,9 +220,9 @@ class Ghost(Heros):
 
     def __init__(self,pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops):
         super(Ghost, self).__init__( pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops)
-        self.image_list = [pg.image.load("hero1.png"), pg.image.load("hero2.png"), pg.image.load("hero3.png"),
-                           pg.image.load("hero4.png"), pg.image.load("hero3.png"), pg.image.load("hero2.png"),
-                           pg.image.load("hero1.png")]
+        self.image_list = [pg.image.load("image\\hero1.png"), pg.image.load("image\\hero2.png"), pg.image.load("image\\hero3.png"),
+                           pg.image.load("image\\hero4.png"), pg.image.load("image\\hero3.png"), pg.image.load("image\\hero2.png"),
+                           pg.image.load("image\\hero1.png")]
         self.current_image = 0
         self.image = self.image_list[self.current_image]
         self.rect=self.image.get_rect(center=pos)

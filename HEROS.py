@@ -85,7 +85,7 @@ class Heros(pg.sprite.Sprite):
             if len(drop_Hero)==1:
                 self.welcome_drop(drop_Hero[0].get_effect())
             self.move()
-        #   self.animation()
+            self.animation()
             self.fire(dt,self.cor,self.firex)
             self.healthbar(self.screen)
             self.atack_skill(dt)
@@ -125,7 +125,7 @@ class Heros(pg.sprite.Sprite):
         rect=image.get_rect(center=(self.rect.center[0],self.rect.center[1]+32))
         self.image=self.image_list[int(self.current_image)]
         if self.amIGhost:
-            self.image.set_alpha(80)
+            self.image.set_alpha(150)
         else:
             self.image.set_alpha(255)
         self.screen.blit(image,rect)
@@ -253,7 +253,7 @@ class Ghost(Heros):
             center=(self.screen.get_width() - self.rect.center[0], self.rect.center[1])
             image=self.image.copy()
             rect = image.get_rect(center=center)
-            image.set_alpha(80)
+            image.set_alpha(150)
             self.screen.blit(image, rect)
             self.fire(dt,center,self.firex)
             self.cooldown_atack-=dt

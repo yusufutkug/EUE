@@ -1,5 +1,5 @@
 import pygame as pg
-import random,sys
+import  sys
 from ARMY import *
 from HEROS import *
 from SKILLS import *

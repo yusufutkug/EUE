@@ -1,4 +1,5 @@
 import random
+import math
 import pygame as pg
 from BULLET import *
 
@@ -7,7 +8,8 @@ class Enemy(pg.sprite.Sprite):
     def __init__(self, pos,speed, all_sprites,bullets,enemies,screen,hero_bullets):
         super(Enemy, self).__init__(enemies)
         self.image = pg.image.load("enemy1.png")
-        self.rect = self.image.get_rect(center=pos)
+        self.center=pos
+        self.rect = self.image.get_rect(center=self.center)
         self.health = 30
         self.speed=speed
         self.all_sprites=all_sprites
@@ -33,6 +35,9 @@ class Enemy(pg.sprite.Sprite):
                     pg.image.load("Varlık 6.png")]
         self.explosion=pg.mixer.Sound("explosion.wav")
         self.coins=0
+        self.x=0
+        self.art=0.01
+        
         
         
 
@@ -45,7 +50,8 @@ class Enemy(pg.sprite.Sprite):
             if self.health <= 0:
                 self.dead=True
                 self.explosion.play()
-
+            self.move()
+       
         else:
             self.animation()
             
@@ -69,10 +75,26 @@ class Enemy(pg.sprite.Sprite):
             if x>999-int((speed+0.6)**(1/2))//2:
                 Bullet((self.rect.center[0],self.rect.center[1]+50), self.bullet_image,self.vel,self.bullet_damage, self.all_sprites, self.bullets,self.bullet_health)
                 self.bullet_timer=self.bullet_time
-    def move_down_up(self,direction):
-        pass
-    def move_right_left(self,direction):
-        pass
+
+    def move(self):
+
+        #self.rect.centery=self.center[1]
+        #self.rect.centerx=self.center[0]
+        
+        x=self.x
+        y=50*math.sin(x)
+        self.rect.center=(self.center[0]+5*x,self.center[1]-y)
+        if self.rect.center[0]>=self.screen.get_width()-200:
+           self.art=-0.01
+        elif self.rect.center[0]<=200:
+            self.art=0.01
+        if self.rect.center[1]< 50:
+            pass
+        elif self.rect.center[1]> self.screen.get_height()-400:
+            pass
+        self.x+=self.art
+  
+        
 
     def get_score_coin(self) -> int:
         if self.dead:

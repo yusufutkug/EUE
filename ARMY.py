@@ -1,4 +1,5 @@
 from scipy import rand
+import math
 from ENEMIES import *
 import random
 import pygame as pg
@@ -16,8 +17,11 @@ class Army():
         self.screen=screen
         self.score=0
         self.coins=0
+        self.x=0
+        self.art=0.1
         self.enemies=[]
         self.drop_numbers=random.randint(0,3)
+
 
     def update(self):
         for enemy in self.enemies:
@@ -25,6 +29,7 @@ class Army():
                 if random.choice([0,0,0,1]):
                     self.creating_drop(enemy)
                 self.enemies.remove(enemy)
+            self.move_army(enemy,math.sin)
 
     def creating_army(self,speed):
         self.drop_numbers=random.randint(0,2)
@@ -45,10 +50,10 @@ class Army():
 
 
 
-    def move_army(self,left):
+    def move_army(self,enemy,fonksiyon):
+        print(fonksiyon(5))
+        enemy.move()
 
-        for enemy in self.enemies:
-            pass
     
     def get_score(self,enemy):
 

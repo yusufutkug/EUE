@@ -7,10 +7,12 @@ from ITEMS import *
 from INVENTORY import *
 
 
-
+pg.init()
+pg.display.init()
+pg.mixer.init()
 class Game:
     __background = pg.image.load("image\\bg5.12.jpg")
-    __window_width, __window_height = 1536, 864
+    __window_width, __window_height = pygame.display.Info().current_w,pygame.display.Info().current_h
     __window_size = (__window_width, __window_height)
     __bgX = -__background.get_height() + __window_height
     __bgX2 = -2 * __background.get_height() + __window_height
@@ -56,7 +58,8 @@ class Game:
         the_score = self.font.render(str(self.updateFile(0)), True, (128, 1, 1))
         the_scorerect = the_score.get_rect(center= (self.__window_width // 2, self.__window_height // 6 +196))
         blit_list=[(text_to_start, textRect),(game_name, game_name_rect),(top_score, top_scorerect),(the_score, the_scorerect),(left_icon, (self.__screen.get_width() // 2 - 160, self.__screen.get_height() // 2 + 32)),(right_icon, (self.__screen.get_width() // 2 + 96, self.__screen.get_height() // 2 + 32))]
-        while True:  
+        check=True
+        while check:  
             if not pygame.mixer.music.get_busy():
                 pygame.mixer.music.play()
             for event in pg.event.get():
@@ -64,8 +67,9 @@ class Game:
                     return sys.exit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
+                        check=False
                         pg.mouse.set_pos(self.__screen.get_width()/2,self.__screen.get_height()/7*6)
-                        return self.run()      
+                        self.run()      
                     elif event.key == pg.K_RIGHT:
                         self.Hero.kill()
                         self.Hero=Ghost((self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player,self.enemy_bullets,self.enemies,self.drops)
@@ -129,13 +133,13 @@ class Game:
     def update_score_coins(self):
 
         self.score=self.army.send_score()
-        self.bgspeed=0.4+(self.score//10)**(1/2)
+        self.bgspeed=1+(self.score//10)**(1/2)
         self.wallet.update_wallet(self.army.send_coins())
     
     def run_logic(self, dt):
 
         self.all_sprites.update(dt)
-        self.army.update()
+        self.army.update(self.Hero.get_firex())
         self.update_score_coins()
         self.item1.Canbebought(self.wallet.my_coins())
         self.item2.Canbebought(self.wallet.my_coins())        
@@ -208,8 +212,6 @@ class Game:
 
 
 if __name__ == '__main__':
-
-    pg.init()
     pg.mouse.set_visible(False)
     EUE=Game()
     EUE.entry_screen()

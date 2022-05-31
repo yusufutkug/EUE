@@ -1,3 +1,4 @@
-art=0.03
-art*=-1
-print(art)
+import pygame
+pygame.display.init()
+print(pygame.display.Info().current_h)
+pygame.display.quit()

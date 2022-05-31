@@ -22,7 +22,7 @@ class Heros(pg.sprite.Sprite):
         self.bullet_timer = 1
         self.bullet_time=0.1
         self.bullet_img=pg.Surface((3,10))
-        self.bullet_img.fill((255,0,0))
+        self.bullet_img.fill((0,255,0))
         self.health=100
         self.max_health=100
         self.screen=window
@@ -38,17 +38,18 @@ class Heros(pg.sprite.Sprite):
         self.firex=1
 
     def move(self):
+
         self.cor=pg.mouse.get_pos()
         self.rect.center = self.cor
 
     def fire(self,dt,cor,x):
+
         mouse_pressed = pg.mouse.get_pressed()
-        self.bullet_timer -= dt  # Subtract the time since the last tick.
+        self.bullet_timer -= dt 
         if self.bullet_timer <= 0:
-            self.bullet_timer = 0  # Bullet ready.
             if x%2==1:
-               if mouse_pressed[0]:  # Left mouse button.
-                        # Create a new bullet instance and add it to the groups.
+               if mouse_pressed[0]:  
+                        
                         Bullet(cor, self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
                         self.laser_sound.play()
                         if not x==1:
@@ -60,16 +61,16 @@ class Heros(pg.sprite.Sprite):
                 k=1/2
                 for i in range(1,x+1):
                     i=(i+1)//2
-                    if mouse_pressed[0]:  # Left mouse button.
-                        # Create a new bullet instance and add it to the groups.
+                    if mouse_pressed[0]:  
                         Bullet((cor[0]+(i*k*distance),cor[1]), self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
                         self.laser_sound.play()
-                        self.bullet_timer = self.bullet_time  # Reset the timer.
+                        self.bullet_timer = self.bullet_time  
                         k*=-1
                         
 
 
     def update(self, dt):
+
         if self.health <= 0:
             self.kill()
             self.hero_death=True
@@ -110,9 +111,11 @@ class Heros(pg.sprite.Sprite):
 
 
     def get_width(self):
+
         return self.image.get_width()
 
     def animation(self):
+
         mouse_pressed = pg.mouse.get_pressed()
         image=self.animated[int(self.current_animated)]
         self.current_animated+=0.3
@@ -132,35 +135,27 @@ class Heros(pg.sprite.Sprite):
 
 
     def get_height(self):
+
         return self.image.get_height()
 
     def healthbar(self, window):
+
             pg.draw.rect(window, (255, 0, 0),(self.rect.x, self.rect.y + self.get_height() + 20, self.get_width(), 10))
             pg.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.get_height() + 20, self.get_width() * (self.health / self.max_health), 10))
+
     def defense_skill(self):
-        if self.defenseSkill:
-            self.health+=10
-            if self.health>=self.max_health:
-                self.health=self.max_health
-            self.defenseSkill=False
+
+        pass
 
     def atack_skill(self,dt):
-        if self.atackSkill:
 
-            center=(self.screen.get_width() - self.rect.center[0], self.rect.center[1])
-            image=self.image.copy()
-            rect = image.get_rect(center=center)
-            image.set_alpha(80)
-            self.screen.blit(self.image, rect)
-            self.fire(dt,center,self.firex)
-            self.cooldown_atack-=dt
-            if self.cooldown_atack<=0:
-                self.atackSkill=False
-                self.cooldown_atack=5
+        pass
 
     def item1_efect(self,increase):
-
-        self.bullet_time-=increase
+        if self.bullet_time>=0.2:
+            self.bullet_time-=increase
+        else:
+            self.item2_efect(5)
         
     
     def item2_efect(self,increase):
@@ -168,12 +163,16 @@ class Heros(pg.sprite.Sprite):
         self.bullet_damage+=increase
 
     def keyCheck(self,key,bool):
+
         if key=="e" and bool:
             pg.mixer.Sound("sound\\mixkit-robot-system-fail-2960.wav").play()
             self.atackSkill=True
         elif key=="q" and bool:
             self.defenseSkill=True
+    
+    def get_firex(self):
 
+        return self.firex
 
 
 class Tank(Heros):
@@ -191,11 +190,13 @@ class Tank(Heros):
         self.screen = window
         self.bullet_damage = 15
         self.bullet_vel = (0, -300)
+        self.cooldown_atack=5
+        self.bullet_img.fill((255,0,0))
         self.defenseSkill=False
         self.atackSkill=False
         self.amIGhost=False
 
-    def defense_skill(self):
+    def defense_skill(self,dt):
         if self.defenseSkill:
             self.health+=10
             if self.health>=self.max_health:
@@ -205,10 +206,6 @@ class Tank(Heros):
     def atack_skill(self,dt):
         if self.atackSkill:
 
-            center=(self.screen.get_width() - self.rect.center[0], self.rect.center[1])
-            rect = self.image.get_rect(center=center)
-            self.screen.blit(self.image, rect)
-            self.fire(dt,center)
             self.cooldown_atack-=dt
             if self.cooldown_atack<=0:
                 self.atackSkill=False
@@ -227,13 +224,14 @@ class Ghost(Heros):
         self.image = self.image_list[self.current_image]
         self.rect=self.image.get_rect(center=pos)
         self.bullet_time = 0.5
-        self.health = 100
-        self.max_health = 100
+        self.health = 60
+        self.max_health = 60
         self.screen = window
         self.bullet_damage = 25
         self.bullet_vel = (0, -450)
         self.cooldown_atack=4
         self.cooldown_defense=8
+        self.bullet_img.fill((255,0,0))
         self.defenseSkill=False
         self.atackSkill=False
         self.amIGhost=False

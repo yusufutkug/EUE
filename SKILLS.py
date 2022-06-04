@@ -17,7 +17,7 @@ class Skills(pygame.sprite.Sprite):
         self.cooldown_time =10
         self.cooldown_timer = 40
         self.wait_time=0.2
-        self.music=("sound\\lightsaber-1-14787 (1).wav")
+        
 
     def update(self,dt):
         if self.cooldown:
@@ -28,7 +28,6 @@ class Skills(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(bottomleft=self.cor)
             self.cooldown_time-=dt
             if self.cooldown_time<=0:
-                pygame.mixer.Sound(self.music)
                 self.cooldown=False
                 self.cooldown_time=self.cooldown_timer
         else:
@@ -109,7 +108,7 @@ class atack_skill(Skills):
         self.cor=(pygame.display.Info().current_w-self.image.get_width()-30,pygame.display.Info().current_h-30)
         self.rect = self.image.get_rect(bottomright=self.cor)
         self.cooldown = False
-        self.cooldown_time = 5
-        self.cooldown_timer = 5
+        self.cooldown_time = 40
+        self.cooldown_timer = 40
         self.wait_time=0.2
    

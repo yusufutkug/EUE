@@ -34,10 +34,15 @@ class Heros(pg.sprite.Sprite):
         self.animated=[pg.Surface((1,1))]
         self.atackSkill=False
         self.defenseSkill=False
-        self.laser_sound = pg.mixer.Sound('sound\\laser.wav')
+        self.laser_sound = pg.mixer.Sound('sound\\shoot.wav')
         self.laser_sound.set_volume(0.3)
         self.amIGhost=False
         self.firex=1
+        self.dropsound=pg.mixer.Sound("sound\\water_drop-6707.wav")
+        self.atack_skillsound=pg.mixer.Sound("sound\\magic-strike-5856.wav")
+        self.defense_skillsound=pg.mixer.Sound("sound\\arcade-bleep-sound-6071.wav")
+        self.buzzersound=pg.mixer.Sound("sound\\wrong-buzzer-6268.wav")
+        self.gameoversound=pg.mixer.Sound("sound\\game-over-arcade-6435.wav")
 
     def move(self):
 
@@ -48,32 +53,29 @@ class Heros(pg.sprite.Sprite):
 
         mouse_pressed = pg.mouse.get_pressed()
         self.bullet_timer -= dt 
-        if self.bullet_timer <= 0:
-            if x%2==1:
-               if mouse_pressed[0]:  
-                        
-                        Bullet(cor, self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
-                        self.laser_sound.play()
-                        if not x==1:
-                            self.fire(dt,cor,(x-1))
-                        else:
-                            self.bullet_timer = self.bullet_time
+        if self.bullet_timer <= 0 and mouse_pressed[0]:
+            self.laser_sound.play()
+            if x%2==1:                
+                Bullet(cor, self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
+                if not x==1:
+                    self.fire(dt,cor,(x-1))
+                else:
+                    self.bullet_timer = self.bullet_time
             else:
                 distance=self.image.get_width()//x
                 k=1/2
                 for i in range(1,x+1):
                     i=(i+1)//2
-                    if mouse_pressed[0]:  
-                        Bullet((cor[0]+(i*k*distance),cor[1]), self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
-                        self.laser_sound.play()
-                        self.bullet_timer = self.bullet_time  
-                        k*=-1
+                    Bullet((cor[0]+(i*k*distance),cor[1]), self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
+                    self.bullet_timer = self.bullet_time  
+                    k*=-1
                         
 
 
     def update(self, dt):
 
         if self.health <= 0:
+            self.gameoversound.play()
             self.kill()
             self.hero_death=True
         if not self.hero_death:
@@ -95,7 +97,7 @@ class Heros(pg.sprite.Sprite):
             self.defense_skill(dt)
 
     def welcome_drop(self,list):
-        
+        self.dropsound.play()
         if list[0]=="power":
             self.firex+=list[1]
             if self.firex>5:
@@ -169,11 +171,15 @@ class Heros(pg.sprite.Sprite):
     def keyCheck(self,key,bool):
 
         if key=="e" and bool:
-            pg.mixer.Sound("sound\\mixkit-robot-system-fail-2960.wav").play()
+            self.atack_skillsound.play()
             self.atackSkill=True
         elif key=="q" and bool:
+            self.defense_skillsound.play()
             self.defenseSkill=True
-    
+        else:
+            self.buzzersound.set_volume(0.2)
+            self.buzzersound.play()
+           
     def get_firex(self):
 
         return self.firex

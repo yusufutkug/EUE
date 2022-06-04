@@ -204,6 +204,7 @@ class Game:
         self.__screen.blit(exit,exitRect)
         pg.display.flip()
         check=True
+        pg.mouse.set_cursor((8, 8),(0, 0),(0, 96, 120, 126, 112, 96, 0, 0),(224,240, 254, 255, 254, 240, 96, 0))
         pg.mouse.set_visible(True)
         while check:
             for event in pg.event.get():
@@ -223,7 +224,7 @@ class Game:
                     self.__init__()
                     self.entry_screen()
     def play_again(self):
-
+        pg.mixer.music.pause()
         font=pg.font.SysFont('ocraextended', 100)
         text=font.render('GAME OVER', True, (255, 255, 255))
         rect=text.get_rect(midbottom=(self.__screen.get_width()//2,self.__screen.get_height()//2-100))
@@ -235,6 +236,7 @@ class Game:
         self.__screen.blit(playAgain,playAgainRect)
         self.__screen.blit(exit,exitRect)
         pg.display.flip()
+        pg.mouse.set_cursor((8, 8),(0, 0),(0, 96, 120, 126, 112, 96, 0, 0),(224,240, 254, 255, 254, 240, 96, 0))
         pg.mouse.set_visible(True)
         while True:
             for event in pg.event.get():

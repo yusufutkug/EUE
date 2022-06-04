@@ -20,7 +20,7 @@ class Item(pg.sprite.Sprite):
         self.canbebought=False
 
     def get_increase(self):
-        pg.mixer.Sound("sound\\mixkit-arcade-video-game-bonus-2044.wav")
+        pg.mixer.Sound("sound\\mixkit-arcade-video-game-bonus-2044.wav").play()
         return self.increase
 
     def HowMuchisIt(self):

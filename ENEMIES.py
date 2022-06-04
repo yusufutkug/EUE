@@ -34,6 +34,7 @@ class Enemy(pg.sprite.Sprite):
                     pg.image.load("image\\Varlık 3.png"), pg.image.load("image\\Varlık 5.png"),
                     pg.image.load("image\\Varlık 6.png")]
         self.explosion=pg.mixer.Sound("sound\\explosion.wav")
+        self.explosion.set_volume(0.5)
         self.coins=0
         self.x=0
         self.art=0.01

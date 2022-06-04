@@ -6,7 +6,8 @@ class Enemy(pg.sprite.Sprite):
 
     def __init__(self, pos,speed, all_sprites,bullets,enemies,screen,hero_bullets):
         super(Enemy, self).__init__(enemies)
-        self.image = pg.image.load("image\\enemy1.png")
+        self.image = pg.Surface((32,64))
+        self.image.fill((255,200,0))
         self.center=pos
         self.rect = self.image.get_rect(center=self.center)
         self.health = 30
@@ -23,7 +24,7 @@ class Enemy(pg.sprite.Sprite):
         self.bullet_damage = 10
         self.bullet_health = 1 * int(speed**(1/2))
         self.bullet_image = pg.image.load("image\\bomb.png")
-        self.score=5
+        self.score=0
         self.screen=screen
         self.dead=False
         self.current_animated = 0
@@ -43,9 +44,10 @@ class Enemy(pg.sprite.Sprite):
 
     def update(self, dt):
         if not self.dead:
-            hits = pg.sprite.spritecollide(self, self.hero_bullets,True)
+            hits = pg.sprite.spritecollide(self, self.hero_bullets,False)
             for bullet in hits:
                 self.health-=bullet.get_damage()
+                bullet.change_health(self.damage)
             self.fire(dt,self.speed)
             if self.health <= 0:
                 self.dead=True
@@ -78,10 +80,10 @@ class Enemy(pg.sprite.Sprite):
 
     def move(self,x,y):
 
-        self.rect.center=(self.center[0]+5*x,self.center[1]-y)
-        if self.rect.center[0]>=self.screen.get_width()-100:
+        self.rect.center=(self.center[0]+x,self.center[1]+y)
+        if self.rect.right>=self.screen.get_width():
             self.contact=True
-        elif self.rect.center[0]<=100:
+        elif self.rect.left<=0:
             self.contact=True   
         if self.rect.center[1]< 50:
             pass
@@ -123,6 +125,7 @@ class Enemy1(Enemy):
         self.bullet_image = pg.image.load("image\\bomb.png")
         self.bullet_health = 12 * int(speed**(1/2))
         self.bullet_time = 3*(1/(int(speed**(1/2))))
+        self.bullet_timer=3*(1/(int(speed**(1/2))))
         self.score = int(3*int(speed**(1/2)))
         self.coins=int(speed**(1/4))
         self.vel=(0,100*int(speed**(1/2)))
@@ -142,7 +145,8 @@ class Enemy2(Enemy):
         self.bullet_image = pg.image.load("image\\torpedo.png")
         self.bullet_damage = 25*int(speed**(1/2))
         self.bullet_health = 16 * int(speed**(1/2))
-        self.bullet_time = 1*(1/int(speed**(1/2)))
+        self.bullet_time = 2*(1/int(speed**(1/2)))
+        self.bullet_timer=2*(1/int(speed**(1/2)))
         self.score=int(7*int(speed**(1/2)))
         self.coins=int(2*int(speed**(1/4)))
         self.vel=(0,110*int(speed**(1/2)))
@@ -163,6 +167,7 @@ class Enemy3(Enemy):
         self.bullet_image = pg.image.load("image\\nuclear-bomb.png")
         self.bullet_health=20*int(speed**(1/2))
         self.bullet_time = 1*(1/(int(speed**(1/2))))
+        self.bullet_timer=1*(1/(int(speed**(1/2))))
         self.score=int(10*int(speed**(1/2)))
         self.coins=int(3*int(speed**(1/4)))
         self.vel=(0,120*int(speed**(1/2)))

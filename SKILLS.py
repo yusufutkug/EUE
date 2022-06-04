@@ -2,7 +2,7 @@ import pygame
 from sympy import re
 
 class Skills(pygame.sprite.Sprite):
-
+ 
 
     def __init__(self,all_sprites,skills_sprite):
         super(Skills, self).__init__(skills_sprite)
@@ -15,7 +15,9 @@ class Skills(pygame.sprite.Sprite):
         self.rect=None
         self.cooldown=False
         self.cooldown_time =10
+        self.cooldown_timer = 40
         self.wait_time=0.2
+        self.music=("sound\\lightsaber-1-14787 (1).wav")
 
     def update(self,dt):
         if self.cooldown:
@@ -26,8 +28,9 @@ class Skills(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(bottomleft=self.cor)
             self.cooldown_time-=dt
             if self.cooldown_time<=0:
+                pygame.mixer.Sound(self.music)
                 self.cooldown=False
-                self.cooldown_time=10
+                self.cooldown_time=self.cooldown_timer
         else:
             self.current_image+=self.wait_time
             if self.current_image >= len(self.image_list):
@@ -70,10 +73,11 @@ class defense_skill(Skills):
 
         self.current_image = 0
         self.image = self.image_list[self.current_image]
-        self.cor = (100, 780)
+        self.cor = (30,pygame.display.Info().current_h-30)
         self.rect = self.image.get_rect(bottomleft=self.cor)
         self.cooldown = False
-        self.cooldown_time = 25
+        self.cooldown_time = 40
+        self.cooldown_timer = 40
         self.wait_time=0.09
 
 
@@ -102,9 +106,10 @@ class atack_skill(Skills):
 
         self.current_image = 0
         self.image = self.image_list[self.current_image]
-        self.cor=(1400, 780)
-        self.rect = self.image.get_rect(bottomleft=self.cor)
+        self.cor=(pygame.display.Info().current_w-self.image.get_width()-30,pygame.display.Info().current_h-30)
+        self.rect = self.image.get_rect(bottomright=self.cor)
         self.cooldown = False
-        self.cooldown_time = 30
+        self.cooldown_time = 5
+        self.cooldown_timer = 5
         self.wait_time=0.2
    

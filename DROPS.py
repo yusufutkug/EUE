@@ -17,6 +17,8 @@ class Drops(pg.sprite.Sprite):
         self.screen=screen
         self.screenWidth=self.screen.get_width()
         self.health=firex
+        self.effect=0
+        self.me="pass"
         
     
     def update(self,dt):
@@ -53,7 +55,7 @@ class Power_Upp(Drops):
         self.effect=1
         self.me="power"
 
-    
+
 class Health_Upp(Drops):
 
 
@@ -62,3 +64,5 @@ class Health_Upp(Drops):
         self.image=pg.image.load("image\\gear.png")
         self.effect=15
         self.me="health"
+
+

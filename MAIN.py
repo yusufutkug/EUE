@@ -1,3 +1,4 @@
+import py
 import pygame as pg
 import  sys
 from ARMY import *
@@ -22,7 +23,7 @@ class Game:
         self.font = pg.font.SysFont('ocraextended', 40)
         self.__screen = pg.display.set_mode(self.__window_size,pg.FULLSCREEN)  
         self.score=0
-        self.bgspeed=0.4  
+        self.bgspeed=0.4
         self.all_sprites = pg.sprite.Group()
         self.skills_sprite= pg.sprite.Group()
         self.enemies = pg.sprite.Group()
@@ -32,14 +33,16 @@ class Game:
         self.item_sprite =pg.sprite.Group()
         self.wallet_sprite=pg.sprite.Group()
         self.drops=pg.sprite.Group()
-        self.Hero=Tank((self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player,self.enemy_bullets,self.enemies,self.drops)
         self.army=Army(self.all_sprites,self.enemy_bullets, self.enemies,self.__screen,self.hero_bullets,self.drops)
         self.item1=Speed_of_Shooting(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen)
         self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen)
         self.atack_skill=atack_skill(self.all_sprites,self.skills_sprite)
         self.defense_skill=defense_skill(self.all_sprites,self.skills_sprite)
         self.wallet = Wallet(self.all_sprites,self.wallet_sprite,self.__screen,self.font)
-        
+        self.hero_index=0
+        self.heroList=Heros.__subclasses__()
+        self.Heroparemeters=[(self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player,self.enemy_bullets,self.enemies,self.drops]
+        self.Hero=self.heroList[self.hero_index](self.Heroparemeters[0],self.Heroparemeters[1],self.Heroparemeters[2],self.Heroparemeters[3],self.Heroparemeters[4],self.Heroparemeters[5],self.Heroparemeters[6],self.Heroparemeters[7])
         
 
 
@@ -59,6 +62,7 @@ class Game:
         the_scorerect = the_score.get_rect(center= (self.__window_width // 2, self.__window_height // 6 +196))
         blit_list=[(text_to_start, textRect),(game_name, game_name_rect),(top_score, top_scorerect),(the_score, the_scorerect),(left_icon, (self.__screen.get_width() // 2 - 160, self.__screen.get_height() // 2 + 32)),(right_icon, (self.__screen.get_width() // 2 + 96, self.__screen.get_height() // 2 + 32))]
         check=True
+         
         while check:  
             if not pygame.mixer.music.get_busy():
                 pygame.mixer.music.play()
@@ -72,10 +76,16 @@ class Game:
                         self.run()      
                     elif event.key == pg.K_RIGHT:
                         self.Hero.kill()
-                        self.Hero=Ghost((self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player,self.enemy_bullets,self.enemies,self.drops)
+                        self.hero_index-=1
+                        if self.hero_index<-len(self.heroList):
+                            self.hero_index=len(self.heroList)-1
+                        self.Hero=self.heroList[self.hero_index](self.Heroparemeters[0],self.Heroparemeters[1],self.Heroparemeters[2],self.Heroparemeters[3],self.Heroparemeters[4],self.Heroparemeters[5],self.Heroparemeters[6],self.Heroparemeters[7])
                     elif event.key == pg.K_LEFT:
                         self.Hero.kill()
-                        self.Hero =Tank((self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player,self.enemy_bullets,self.enemies,self.drops)
+                        self.hero_index+=1
+                        if self.hero_index==len(self.heroList):
+                            self.hero_index=-len(self.heroList)
+                        self.Hero =self.heroList[self.hero_index](self.Heroparemeters[0],self.Heroparemeters[1],self.Heroparemeters[2],self.Heroparemeters[3],self.Heroparemeters[4],self.Heroparemeters[5],self.Heroparemeters[6],self.Heroparemeters[7])
             self.update_background(self.bgspeed)
             for i,j in blit_list:
                 self.__screen.blit(i,j)
@@ -139,11 +149,12 @@ class Game:
     def run_logic(self, dt):
 
         self.all_sprites.update(dt)
-        self.army.update(self.Hero.get_firex())
+        self.army.update(self.Hero.get_firex(),dt)
         self.update_score_coins()
         self.item1.Canbebought(self.wallet.my_coins())
         self.item2.Canbebought(self.wallet.my_coins())        
         if len(self.enemies.sprites())==0:
+            self.army.selectArmy()
             self.army.creating_army(self.bgspeed)
         
 
@@ -180,34 +191,67 @@ class Game:
         return last
     
     def pause(self):
-
+        x=pg.mouse.get_pos()
         font=pg.font.SysFont('ocraextended', 80)
-        text=font.render('Come on!!!', True, (255, 255, 255))
-        rect=text.get_rect(center=(self.__screen.get_width()//2,self.__screen.get_height()//2))
+        text=font.render('PAUSE', True, (255, 255, 255))
+        rect=text.get_rect(midbottom=(self.__screen.get_width()//2,self.__screen.get_height()//2-100))
+        playAgain=pg.image.load("image\\reloading.png")
+        exit=pg.image.load("image\\exit.png")
+        playAgainRect=playAgain.get_rect(center=(self.__screen.get_width()/2-100,self.__screen.get_height()/2))
+        exitRect=exit.get_rect(center=(self.__screen.get_width()/2+100,self.__screen.get_height()/2))
         self.__screen.blit(text,rect)
+        self.__screen.blit(playAgain,playAgainRect)
+        self.__screen.blit(exit,exitRect)
         pg.display.flip()
         check=True
+        pg.mouse.set_visible(True)
         while check:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
+                    if event.type == pg.QUIT:
+                        sys.exit()
                     if event.key == pg.K_ESCAPE:
                         check=False
-
+                        pg.mouse.set_pos(x)
+                        pg.mouse.set_visible(False)
+            if pg.mouse.get_pressed()[0]:
+                cor=pg.mouse.get_pos()
+                if cor[0] in range(exitRect.left,exitRect.right) and cor[1] in range(exitRect.top,exitRect.bottom) :
+                    sys.exit()
+                elif cor[0] in range(playAgainRect.left,playAgainRect.right) and cor[1] in range(playAgainRect.top,playAgainRect.bottom) :
+                    check=False
+                    self.__init__()
+                    self.entry_screen()
     def play_again(self):
 
         font=pg.font.SysFont('ocraextended', 100)
         text=font.render('GAME OVER', True, (255, 255, 255))
-        rect=text.get_rect(center=(self.__screen.get_width()//2,self.__screen.get_height()//2))
+        rect=text.get_rect(midbottom=(self.__screen.get_width()//2,self.__screen.get_height()//2-100))
+        playAgain=pg.image.load("image\\reloading.png")
+        exit=pg.image.load("image\\exit.png")
+        playAgainRect=playAgain.get_rect(center=(self.__screen.get_width()/2-100,self.__screen.get_height()/2))
+        exitRect=exit.get_rect(center=(self.__screen.get_width()/2+100,self.__screen.get_height()/2))
         self.__screen.blit(text,rect)
+        self.__screen.blit(playAgain,playAgainRect)
+        self.__screen.blit(exit,exitRect)
         pg.display.flip()
+        pg.mouse.set_visible(True)
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    return sys.exit()
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_RETURN:
-                        self.__init__()
-                        self.entry_screen()
+                    sys.exit()
+            if pg.mouse.get_pressed()[0]:
+                cor=pg.mouse.get_pos()
+                if cor[0] in range(exitRect.left,exitRect.right) and cor[1] in range(exitRect.top,exitRect.bottom) :
+                    sys.exit()
+                elif cor[0] in range(playAgainRect.left,playAgainRect.right) and cor[1] in range(playAgainRect.top,playAgainRect.bottom) :
+                    pg.mouse.set_visible(False  )
+                    self.__init__()
+                    self.entry_screen()
+                    
+                
+    
+    
 
 
 

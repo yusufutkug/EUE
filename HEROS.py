@@ -1,5 +1,3 @@
-from re import S
-from ssl import enum_certificates
 import pygame as pg
 from BULLET import *
 class Heros(pg.sprite.Sprite):
@@ -9,7 +7,9 @@ class Heros(pg.sprite.Sprite):
         super(Heros, self).__init__(sprite_groups)
         self.hero_death=False
         self.cor=pos
-        self.image_list=[pg.image.load("image\\hr1.png"),pg.image.load("image\\hr4.png"),pg.image.load("image\\hr1.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr3.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr1.png")]
+        self.image =pg.Surface((64,64))
+        self.image.fill((255,0,0))
+        self.image_list=[self.image]
         self.current_image=0
         self.image = self.image_list[self.current_image]
         self.rect = self.image.get_rect(center=self.cor)
@@ -19,8 +19,10 @@ class Heros(pg.sprite.Sprite):
         self.enemy_bullets=enemy_bullets
         self.enemies=enemies
         self.drops=drops
+        self.cooldown_atack=4
+        self.cooldown_defense=8
         self.bullet_timer = 1
-        self.bullet_time=0.1
+        self.bullet_time=1
         self.bullet_img=pg.Surface((3,10))
         self.bullet_img.fill((0,255,0))
         self.health=100
@@ -29,7 +31,7 @@ class Heros(pg.sprite.Sprite):
         self.bullet_damage=15
         self.bullet_vel=(0,-300)
         self.current_animated=0
-        self.animated=[pg.image.load("image\\Untitled (1).png"),pg.image.load("image\\Untitled (2).png"),pg.image.load("image\\Untitled (3).png")]
+        self.animated=[pg.Surface((1,1))]
         self.atackSkill=False
         self.defenseSkill=False
         self.laser_sound = pg.mixer.Sound('sound\\laser.wav')
@@ -96,6 +98,8 @@ class Heros(pg.sprite.Sprite):
         
         if list[0]=="power":
             self.firex+=list[1]
+            if self.firex>5:
+                self.firex=5
         else:
             self.max_health+=list[1]
             self.health=self.max_health
@@ -121,7 +125,7 @@ class Heros(pg.sprite.Sprite):
         self.current_animated+=0.3
         if mouse_pressed[0]:
             self.current_image+=0.2
-        if self.current_animated>=3:
+        if self.current_animated>=len(self.animated):
             self.current_animated=0
         if self.current_image >= len(self.image_list):
             self.current_image = 0
@@ -143,7 +147,7 @@ class Heros(pg.sprite.Sprite):
             pg.draw.rect(window, (255, 0, 0),(self.rect.x, self.rect.y + self.get_height() + 20, self.get_width(), 10))
             pg.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.get_height() + 20, self.get_width() * (self.health / self.max_health), 10))
 
-    def defense_skill(self):
+    def defense_skill(self,dt):
 
         pass
 
@@ -183,14 +187,15 @@ class Tank(Heros):
         self.image_list =[pg.image.load("image\\hr1.png"),pg.image.load("image\\hr4.png"),pg.image.load("image\\hr1.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr3.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr1.png")]
         self.current_image = 0
         self.image = self.image_list[self.current_image]
-        self.image.convert()
+        self.rect=self.image.get_rect(center=pos)
         self.bullet_time = 0.8
         self.health = 150
         self.max_health = 150
         self.screen = window
         self.bullet_damage = 15
         self.bullet_vel = (0, -300)
-        self.cooldown_atack=5
+        self.cooldown_atack=0
+        self.animated=[pg.image.load("image\\Untitled (1).png"),pg.image.load("image\\Untitled (2).png"),pg.image.load("image\\Untitled (3).png")]
         self.bullet_img.fill((255,0,0))
         self.defenseSkill=False
         self.atackSkill=False
@@ -202,14 +207,24 @@ class Tank(Heros):
             if self.health>=self.max_health:
                 self.health=self.max_health
             self.defenseSkill=False
+            
 
     def atack_skill(self,dt):
         if self.atackSkill:
-
-            self.cooldown_atack-=dt
-            if self.cooldown_atack<=0:
+            cor=pg.mouse.get_pos()
+            image_list=[pg.Surface((1,cor[1])),pg.Surface((1,cor[1])),pg.Surface((1,cor[1])),pg.Surface((3,cor[1])),pg.Surface((3,cor[1])),pg.Surface((3,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((50,cor[1])),pg.Surface((30,cor[1])),pg.Surface((30,cor[1])),pg.Surface((50,cor[1])),pg.Surface((50,cor[1])),pg.Surface((30,cor[1])),pg.Surface((30,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((3,cor[1])),pg.Surface((1,cor[1]))]
+            image=image_list[int(self.cooldown_atack)]
+            bimage=image.copy()
+            bimage.set_alpha(0)
+            rect=image.get_rect(midbottom=(cor[0],cor[1]-32))
+            Bullet(cor,bimage,(0, -950),99999, self.all_sprites, self.bullets,9999)
+            image.fill((255,0,0))
+            self.cooldown_atack+=(dt*40)
+            self.screen.blit(image,rect)
+            pg.display.update(rect)
+            if self.cooldown_atack>=len(image_list)-1:
                 self.atackSkill=False
-                self.cooldown_atack=5
+                
 
 
 class Ghost(Heros):
@@ -229,6 +244,7 @@ class Ghost(Heros):
         self.screen = window
         self.bullet_damage = 25
         self.bullet_vel = (0, -450)
+        self.animated=[pg.image.load("image\\Untitled (1).png"),pg.image.load("image\\Untitled (2).png"),pg.image.load("image\\Untitled (3).png")]
         self.cooldown_atack=4
         self.cooldown_defense=8
         self.bullet_img.fill((255,0,0))
@@ -247,7 +263,6 @@ class Ghost(Heros):
 
     def atack_skill(self,dt):
         if self.atackSkill:
-
             center=(self.screen.get_width() - self.rect.center[0], self.rect.center[1])
             image=self.image.copy()
             rect = image.get_rect(center=center)
@@ -260,7 +275,7 @@ class Ghost(Heros):
                 self.cooldown_atack=4
 
 
-
+        
 
 
 

@@ -69,7 +69,6 @@ class Shooting_Power(Item):
             self.fee = int(40*(speed**(1/2)))//10*10
             self.increase = int(5*int(speed**(1/4)))
             self.rect=self.image.get_rect(topright=(screen.get_width(),144))
-            print(screen.get_width())
             self.name="Shooting Power"
             self.effect="damage"
             self.canbebought=False

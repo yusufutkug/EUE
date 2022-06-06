@@ -17,6 +17,7 @@ class Game:
     __window_size = (__window_width, __window_height)
     __bgX = -__background.get_height() + __window_height
     __bgX2 = -2 * __background.get_height() + __window_height
+    hero_index=0
 
     def __init__(self):
         self.clock = pg.time.Clock()
@@ -39,7 +40,6 @@ class Game:
         self.atack_skill=atack_skill(self.all_sprites,self.skills_sprite)
         self.defense_skill=defense_skill(self.all_sprites,self.skills_sprite)
         self.wallet = Wallet(self.all_sprites,self.wallet_sprite,self.__screen,self.font)
-        self.hero_index=0
         self.heroList=Heros.__subclasses__()
         self.Heroparemeters=[(self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player,self.enemy_bullets,self.enemies,self.drops]
         self.Hero=self.heroList[self.hero_index](self.Heroparemeters[0],self.Heroparemeters[1],self.Heroparemeters[2],self.Heroparemeters[3],self.Heroparemeters[4],self.Heroparemeters[5],self.Heroparemeters[6],self.Heroparemeters[7])

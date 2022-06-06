@@ -4,7 +4,7 @@ class Heros(pg.sprite.Sprite):
 
 
     def __init__(self, pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops):
-        super(Heros, self).__init__(sprite_groups)
+        super(Heros, self).__init__(sprite_groups,all_sprites)
         self.hero_death=False
         self.cor=pos
         self.image =pg.Surface((64,64))
@@ -14,7 +14,6 @@ class Heros(pg.sprite.Sprite):
         self.image = self.image_list[self.current_image]
         self.rect = self.image.get_rect(center=self.cor)
         self.all_sprites = all_sprites
-        self.add(self.all_sprites)
         self.bullets = bullets
         self.enemy_bullets=enemy_bullets
         self.enemies=enemies
@@ -194,11 +193,11 @@ class Tank(Heros):
         self.current_image = 0
         self.image = self.image_list[self.current_image]
         self.rect=self.image.get_rect(center=pos)
-        self.bullet_time = 0.8
+        self.bullet_time = 0.7
         self.health = 150
         self.max_health = 150
         self.screen = window
-        self.bullet_damage = 15
+        self.bullet_damage = 20
         self.bullet_vel = (0, -300)
         self.cooldown_atack=0
         self.animated=[pg.image.load("image\\Untitled (1).png"),pg.image.load("image\\Untitled (2).png"),pg.image.load("image\\Untitled (3).png")]
@@ -209,7 +208,7 @@ class Tank(Heros):
 
     def defense_skill(self,dt):
         if self.defenseSkill:
-            self.health+=10
+            self.health+=self.health//2
             if self.health>=self.max_health:
                 self.health=self.max_health
             self.defenseSkill=False
@@ -218,7 +217,7 @@ class Tank(Heros):
     def atack_skill(self,dt):
         if self.atackSkill:
             cor=pg.mouse.get_pos()
-            image_list=[pg.Surface((1,cor[1])),pg.Surface((1,cor[1])),pg.Surface((1,cor[1])),pg.Surface((3,cor[1])),pg.Surface((3,cor[1])),pg.Surface((3,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((50,cor[1])),pg.Surface((30,cor[1])),pg.Surface((30,cor[1])),pg.Surface((50,cor[1])),pg.Surface((50,cor[1])),pg.Surface((30,cor[1])),pg.Surface((30,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((3,cor[1])),pg.Surface((1,cor[1]))]
+            image_list=[pg.Surface((1,cor[1])),pg.Surface((1,cor[1])),pg.Surface((1,cor[1])),pg.Surface((3,cor[1])),pg.Surface((3,cor[1])),pg.Surface((3,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((70,cor[1])),pg.Surface((40,cor[1])),pg.Surface((30,cor[1])),pg.Surface((50,cor[1])),pg.Surface((50,cor[1])),pg.Surface((30,cor[1])),pg.Surface((30,cor[1])),pg.Surface((9,cor[1])),pg.Surface((9,cor[1])),pg.Surface((3,cor[1])),pg.Surface((1,cor[1]))]
             image=image_list[int(self.cooldown_atack)]
             bimage=image.copy()
             bimage.set_alpha(0)
@@ -229,6 +228,7 @@ class Tank(Heros):
             self.screen.blit(image,rect)
             pg.display.update(rect)
             if self.cooldown_atack>=len(image_list)-1:
+                self.cooldown_atack=0
                 self.atackSkill=False
                 
 
@@ -265,7 +265,7 @@ class Ghost(Heros):
             if self.cooldown_defense<=0:
                 self.defenseSkill=False
                 self.amIGhost=False
-                self.cooldown_defense=8
+                self.cooldown_defense=6
 
     def atack_skill(self,dt):
         if self.atackSkill:
@@ -278,7 +278,7 @@ class Ghost(Heros):
             self.cooldown_atack-=dt
             if self.cooldown_atack<=0:
                 self.atackSkill=False
-                self.cooldown_atack=4
+                self.cooldown_atack=5
 
 
         

@@ -44,6 +44,7 @@ class Army:
             self.Did_touch_enemy(enemy,dt)
     def creating_army(self,speed):
         self.x=0
+        self.y=0
         self.drop_numbers=random.randint(0,3)
         self.speed = speed + 0.6
         self.enemies_list = Enemy.__subclasses__()
@@ -109,7 +110,7 @@ class Army:
                 self.xart=-1
             elif self.x<=-50:
                 self.xart=1
-            elif self.x==1:
+            elif self.x==0:
                 self.yart*=-1
             self.x+=self.xart
             self.y+=self.yart

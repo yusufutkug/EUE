@@ -1,16 +1,17 @@
 import pygame as pg
 from sympy import im
+from Sprites import*
 
 
-class Item(pg.sprite.Sprite):
+class Item(Sprite):
 
 
-    def __init__(self,speed,all_sprites,items_sprite,screen):
-        super(Item, self).__init__(items_sprite)
+    def __init__(self,speed,all_sprites,items_sprite,screen,wallet):
+        super(Item, self).__init__(items_sprite,all_sprites)
         self.fee = 99999
         self.increase = 0
         self.all_sprites=all_sprites
-        self.add(self.all_sprites)
+        self.wallet =wallet
         self.image=pg.image.load("image\\label1.png")
         self.rect=self.image.get_rect(topright=(screen.get_width(),100))
         self.name=None
@@ -19,20 +20,26 @@ class Item(pg.sprite.Sprite):
         self.font1 = pg.font.SysFont('ocraextended',15)
         self.canbebought=False
 
-    def get_increase(self):
+    def to_effect(self):
+
         pg.mixer.Sound("sound\\mixkit-arcade-video-game-bonus-2044.wav").play()
-        return self.increase
+        
+    def trigger(self,Hero):
+        if self.canbebought:
+            self.wallet.update_wallet(self.fee,-1)
+            self.to_effect(Hero)
+            return True
+        else:
+            return False
 
-    def HowMuchisIt(self):
-        return self.fee
-
-    def Canbebought(self,coins):
-        if coins>=self.fee:
+    def Canbebought(self):
+        if self.wallet.Am_I_Rich(self.fee):
             self.canbebought=True
         else:
             self.canbebought=False
 
     def update(self, dt) -> None:
+        self.Canbebought()
         if self.canbebought:
             self.name_label=self.font.render(f"{self.name} {self.fee}$", True, (0,255,0))
             self.effect_label=self.font1.render(f" +{self.increase}",True, (0,255,0))
@@ -51,25 +58,32 @@ class Item(pg.sprite.Sprite):
 class Speed_of_Shooting(Item):
 
 
-        def __init__(self,speed,all_sprites,items_sprite,screen):
-            super(Speed_of_Shooting, self).__init__(speed,all_sprites,items_sprite,screen)
+        def __init__(self,speed,all_sprites,items_sprite,screen,wallet):
+            super(Speed_of_Shooting, self).__init__(speed,all_sprites,items_sprite,screen,wallet,)
             self.fee = int(40*(speed**(1/2)))//10*10
             self.increase = 0.1
             self.rect=self.image.get_rect(topright=(screen.get_width(),70))
             self.name="Speed of Shooting"
             self.canbebought=False
 
+        def to_effect(self,Hero):
+             return super().to_effect()
+             Hero.change_bulletTime(self.increase)
 
 
 class Shooting_Power(Item):
 
 
-        def __init__(self,speed,all_sprites,items_sprite,screen):
-            super(Shooting_Power, self).__init__(speed,all_sprites,items_sprite,screen)
+        def __init__(self,speed,all_sprites,items_sprite,screen,wallet):
+            super(Shooting_Power, self).__init__(speed,all_sprites,items_sprite,screen,wallet)
             self.fee = int(40*(speed**(1/2)))//10*10
             self.increase = int(5*int(speed**(1/4)))
             self.rect=self.image.get_rect(topright=(screen.get_width(),144))
             self.name="Shooting Power"
             self.effect="damage"
             self.canbebought=False
+        
+        def to_effect(self,Hero):
+             return super().to_effect()
+             Hero.change_bulletDamage(self.increase)
 

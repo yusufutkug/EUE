@@ -1,19 +1,20 @@
 import random
 import pygame as pg
 from BULLET import *
+from Sprites import*
 
-class Enemy(pg.sprite.Sprite):
+class Enemy(Sprite):
 
-    def __init__(self, pos,speed, all_sprites,bullets,enemies,screen,hero_bullets):
-        super(Enemy, self).__init__(enemies)
+    def __init__(self, pos,speed, all_sprites,bullets,enemies,screen,hero_bullets,wallet):
+        super(Enemy, self).__init__(enemies,all_sprites)
         self.image = pg.Surface((32,64))
         self.image.fill((255,200,0))
         self.center=pos
         self.rect = self.image.get_rect(center=self.center)
+        self.wallet=wallet
         self.health = 30
         self.speed=speed
         self.all_sprites=all_sprites
-        self.add(self.all_sprites)
         self.bullets=bullets
         self.bullet_timer = 1.5
         self.bullet_time= 3
@@ -40,18 +41,16 @@ class Enemy(pg.sprite.Sprite):
         self.art=0.01
         self.contact=False
         
-        
-        
-
     def update(self, dt):
         if not self.dead:
-            hits = pg.sprite.spritecollide(self, self.hero_bullets,False)
+            hits = self.spritecollide(self.hero_bullets,False)
             for bullet in hits:
-                self.health-=bullet.get_damage()
+                self.health=bullet.get_damage(self.health)
                 bullet.change_health(self.damage)
             self.fire(dt,self.speed)
             if self.health <= 0:
                 self.dead=True
+                self.send_coin()
                 self.explosion.play()
        
         else:
@@ -99,15 +98,23 @@ class Enemy(pg.sprite.Sprite):
         else:
             return False
 
-    def get_score_coin(self) -> int:
+    def get_score_coin(self,score,coin) -> int:
         if self.dead:
-            return (int(self.score),int(self.coins))
-        else:
-            return (0,0)
+            return (int(self.score)+score,int(self.coins)+coin)
+        else:      
+            return (score,coin)
     
-    def get_damage(self):
+    def send_coin(self):
 
-        return self.health
+        self.wallet.update_wallet(self.coins)
+
+    def change_health(self,damage):
+        
+        self.health-=damage
+    
+    def get_damage(self,health):
+
+        return health-self.health
 
     def get_pos(self):
 
@@ -116,8 +123,8 @@ class Enemy(pg.sprite.Sprite):
 class Enemy1(Enemy):
 
 
-    def __init__(self,pos, speed, all_sprites,bullets,enemies,screen,hero_bullets):
-        super(Enemy1, self).__init__(pos, speed, all_sprites,bullets,enemies,screen,hero_bullets)
+    def __init__(self,pos, speed, all_sprites,bullets,enemies,screen,hero_bullets,wallet):
+        super(Enemy1, self).__init__(pos, speed, all_sprites,bullets,enemies,screen,hero_bullets,wallet)
         self.image = pg.image.load("image\\enemy1.png")
         self.rect = self.image.get_rect(center=pos)
         self.health = 30*int(speed**(1/2))
@@ -129,16 +136,16 @@ class Enemy1(Enemy):
         self.bullet_timer=3*(1/(int(speed**(1/2))))
         self.score = int(3*int(speed**(1/2)))
         self.coins=int(speed**(1/4))
-        self.vel=(0,100*int(speed**(1/2)))
-        if self.vel[1]>=250:
-                self.vel=(0,250)
+        self.vel=(0,200*int(speed**(1/2)))
+        if self.vel[1]>=400:
+                self.vel=(0,400)
 
 
 class Enemy2(Enemy):
 
 
-    def __init__(self,pos,speed, all_sprites,bullets,enemies,screen,hero_bullets):
-        super(Enemy2, self).__init__(pos, speed, all_sprites, bullets, enemies,screen,hero_bullets)
+    def __init__(self,pos,speed, all_sprites,bullets,enemies,screen,hero_bullets,wallet):
+        super(Enemy2, self).__init__(pos, speed, all_sprites, bullets, enemies,screen,hero_bullets,wallet)
         self.image=pg.image.load("image\\enemy2.png")
         self.rect = self.image.get_rect(center=pos)
         self.health = 40*int(speed**(1/2))
@@ -150,16 +157,16 @@ class Enemy2(Enemy):
         self.bullet_timer=2*(1/int(speed**(1/2)))
         self.score=int(7*int(speed**(1/2)))
         self.coins=int(2*int(speed**(1/4)))
-        self.vel=(0,110*int(speed**(1/2)))
-        if self.vel[1]>=300:
-                self.vel=(0,300)
+        self.vel=(0,250*int(speed**(1/2)))
+        if self.vel[1]>=450:
+                self.vel=(0,450)
 
 
 class Enemy3(Enemy):
 
 
-    def __init__(self,pos,speed, all_sprites,bullets,enemies,screen,hero_bullets):
-        super(Enemy3, self).__init__(pos,speed, all_sprites,bullets,enemies ,screen,hero_bullets)
+    def __init__(self,pos,speed, all_sprites,bullets,enemies,screen,hero_bullets,wallet):
+        super(Enemy3, self).__init__(pos,speed, all_sprites,bullets,enemies ,screen,hero_bullets,wallet)
         self.image=pg.image.load("image\\enemy3.png")
         self.rect = self.image.get_rect(center=pos)
         self.health = 50*int(speed**(1/2))
@@ -171,6 +178,6 @@ class Enemy3(Enemy):
         self.bullet_timer=1*(1/(int(speed**(1/2))))
         self.score=int(10*int(speed**(1/2)))
         self.coins=int(3*int(speed**(1/4)))
-        self.vel=(0,120*int(speed**(1/2)))
-        if self.vel[1]>=400:
-                self.vel=(0,400)
+        self.vel=(0,300*int(speed**(1/2)))
+        if self.vel[1]>=600:
+                self.vel=(0,600)

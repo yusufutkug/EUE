@@ -1,13 +1,12 @@
 import pygame as pg
+from Sprites import*
 
 
-class Drops(pg.sprite.Sprite):
+class Drops(Sprite):
 
 
     def __init__(self,pos,all_sprites,drop_sprite,hero_bullets,screen,firex) -> None:
-        super(Drops,self).__init__(drop_sprite)
-        self.all_sprites=all_sprites
-        self.add(self.all_sprites)
+        super(Drops,self).__init__(drop_sprite,all_sprites)
         self.hero_bullets=hero_bullets
         self.image=pg.Surface((20,30),10)
         self.image.fill((255,0,0))
@@ -22,7 +21,7 @@ class Drops(pg.sprite.Sprite):
         
     
     def update(self,dt):
-        hero_bullet=pg.sprite.spritecollide(self,self.hero_bullets,True)
+        hero_bullet=self.spritecollide(self.hero_bullets,True)
         for i in hero_bullet:
             self.health-=1
         if self.health<=0:

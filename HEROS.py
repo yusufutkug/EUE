@@ -1,6 +1,7 @@
 import pygame as pg
 from BULLET import *
-class Heros(pg.sprite.Sprite):
+from Sprites import*
+class Heros(Sprite):
 
 
     def __init__(self, pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops):
@@ -40,7 +41,6 @@ class Heros(pg.sprite.Sprite):
         self.dropsound=pg.mixer.Sound("sound\\water_drop-6707.wav")
         self.atack_skillsound=pg.mixer.Sound("sound\\magic-strike-5856.wav")
         self.defense_skillsound=pg.mixer.Sound("sound\\arcade-bleep-sound-6071.wav")
-        self.buzzersound=pg.mixer.Sound("sound\\wrong-buzzer-6268.wav")
         self.gameoversound=pg.mixer.Sound("sound\\game-over-arcade-6435.wav")
 
     def move(self):
@@ -70,7 +70,6 @@ class Heros(pg.sprite.Sprite):
                     k*=-1
                         
 
-
     def update(self, dt):
 
         if self.health <= 0:
@@ -79,13 +78,13 @@ class Heros(pg.sprite.Sprite):
             self.hero_death=True
         if not self.hero_death:
             if not self.amIGhost:
-                hero_bullet=pg.sprite.spritecollide(self,self.enemy_bullets,True) 
-                enemy_Hero=pg.sprite.spritecollide(self,self.enemies,True)
+                hero_bullet=self.spritecollide(self.enemy_bullets,True) 
+                enemy_Hero=self.spritecollide(self.enemies,True)
                 if len(hero_bullet)==1:
-                    self.health-=hero_bullet[0].get_damage()
+                    self.health=hero_bullet[0].get_damage(self.health)
                 if len(enemy_Hero)==1:
-                    self.health-=enemy_Hero[0].get_damage()  
-            drop_Hero=pg.sprite.spritecollide(self,self.drops,True)
+                    self.health=enemy_Hero[0].get_damage(self.health)  
+            drop_Hero=self.spritecollide(self.drops,True)
             if len(drop_Hero)==1:
                 self.welcome_drop(drop_Hero[0].get_effect())
             self.move()
@@ -115,9 +114,13 @@ class Heros(pg.sprite.Sprite):
         screen.blit(hero_name,hero_name_rect)
 
 
-    def get_width(self):
+    def __get_width(self):
 
         return self.image.get_width()
+
+    def __get_height(self):
+
+        return self.image.get_height()
 
     def animation(self):
 
@@ -138,15 +141,10 @@ class Heros(pg.sprite.Sprite):
             self.image.set_alpha(255)
         self.screen.blit(image,rect)
 
-
-    def get_height(self):
-
-        return self.image.get_height()
-
     def healthbar(self, window):
 
-            pg.draw.rect(window, (255, 0, 0),(self.rect.x, self.rect.y + self.get_height() + 20, self.get_width(), 10))
-            pg.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.get_height() + 20, self.get_width() * (self.health / self.max_health), 10))
+            pg.draw.rect(window, (255, 0, 0),(self.rect.x, self.rect.y + self.__get_height() + 20, self.__get_width(), 10))
+            pg.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.__get_height() + 20, self.__get_width() * (self.health / self.max_health), 10))
 
     def defense_skill(self,dt):
 
@@ -156,32 +154,24 @@ class Heros(pg.sprite.Sprite):
 
         pass
 
-    def item1_efect(self,increase):
+    def change_bulletTime(self,value):
+
         if self.bullet_time>=0.2:
-            self.bullet_time-=increase
-        else:
-            self.item2_efect(5)
-        
+            self.bullet_time-=value
+
+    def change_bulletDamage(self,value):
+
+        self.bullet_damage+=value
     
-    def item2_efect(self,increase):
+    def active_defenseSkill(self):
+        self.defense_skillsound.play()
+        self.defenseSkill=True
+    
+    def active_atackSkill(self):
 
-        self.bullet_damage+=increase
+        self.atack_skillsound.play()
+        self.atackSkill=True
 
-    def keyCheck(self,key,bool):
-
-        if key=="e" and bool:
-            self.atack_skillsound.play()
-            self.atackSkill=True
-        elif key=="q" and bool:
-            self.defense_skillsound.play()
-            self.defenseSkill=True
-        else:
-            self.buzzersound.set_volume(0.2)
-            self.buzzersound.play()
-           
-    def get_firex(self):
-
-        return self.firex
 
 
 class Tank(Heros):
@@ -198,7 +188,7 @@ class Tank(Heros):
         self.max_health = 150
         self.screen = window
         self.bullet_damage = 20
-        self.bullet_vel = (0, -300)
+        self.bullet_vel = (0, -500)
         self.cooldown_atack=0
         self.animated=[pg.image.load("image\\Untitled (1).png"),pg.image.load("image\\Untitled (2).png"),pg.image.load("image\\Untitled (3).png")]
         self.bullet_img.fill((255,0,0))
@@ -249,7 +239,7 @@ class Ghost(Heros):
         self.max_health = 60
         self.screen = window
         self.bullet_damage = 25
-        self.bullet_vel = (0, -450)
+        self.bullet_vel = (0, -600)
         self.animated=[pg.image.load("image\\Untitled (1).png"),pg.image.load("image\\Untitled (2).png"),pg.image.load("image\\Untitled (3).png")]
         self.cooldown_atack=4
         self.cooldown_defense=8

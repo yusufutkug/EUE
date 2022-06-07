@@ -1,13 +1,12 @@
 import pygame
 from sympy import re
+from Sprites import*
 
-class Skills(pygame.sprite.Sprite):
+class Skills(Sprite):
  
 
     def __init__(self,all_sprites,skills_sprite):
-        super(Skills, self).__init__(skills_sprite)
-        self.all_sprites = all_sprites
-        self.add(self.all_sprites)
+        super(Skills, self).__init__(skills_sprite,all_sprites)
         self.image_list=[]
         self.image_cooldown= []
         self.current_image=0
@@ -17,6 +16,7 @@ class Skills(pygame.sprite.Sprite):
         self.cooldown_time =10
         self.cooldown_timer = 40
         self.wait_time=0.2
+        self.buzzersound=pygame.mixer.Sound("sound\\wrong-buzzer-6268.wav")
         
 
     def update(self,dt):
@@ -38,20 +38,17 @@ class Skills(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(bottomleft=self.cor)
 
 
-    def key_check(self,bool):
-        self.cooldown=bool
-
-    def trigger(self):
-        if self.cooldown==True:
-             return True
+    def key_check(self,hero):
+        if not self.cooldown:
+            self.trigger(hero)
+            self.cooldown=True
         else:
-            return False
-    def get_cooldown(self):
+            self.buzzersound.set_volume(0.2)
+            self.buzzersound.play()
+    
 
-        if self.cooldown:
-            return False
-        else: 
-           return True
+    def trigger(self,hero):
+        pass
 
 class defense_skill(Skills):
 
@@ -79,6 +76,8 @@ class defense_skill(Skills):
         self.cooldown_timer = 40
         self.wait_time=0.09
 
+    def trigger(self,hero):
+        hero.active_defenseSkill()
 
 
 class atack_skill(Skills):
@@ -111,4 +110,8 @@ class atack_skill(Skills):
         self.cooldown_time = 40
         self.cooldown_timer = 40
         self.wait_time=0.2
+
+    def trigger(self,hero):
+        
+        hero.active_atackSkill()
    

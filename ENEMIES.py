@@ -119,7 +119,6 @@ class Enemy(Sprite):
     def send_pos(self):
         objects=self.army.HereIsX(drop=1)
         if objects!=0:
-            print(objects)
             objects.change_center(self.rect.center)
     
 

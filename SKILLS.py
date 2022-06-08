@@ -56,17 +56,7 @@ class defense_skill(Skills):
     def __init__(self,all_sprites,skills_sprite):
         super(defense_skill, self).__init__(all_sprites,skills_sprite)
         self.image_list = [pygame.image.load("image\\shield.png")]
-                          # pygame.image.load("shield2.png"),pygame.image.load("shield2.png"),pygame.image.load("shield1.png")]
-                           # pygame.image.load("shield4.png"), pygame.image.load("shield5.png"),
-                           # pygame.image.load("shield6.png"), pygame.image.load("shield5.png"),
-                           # pygame.image.load("shield4.png"), pygame.image.load("shield3.png"), pygame.image.load("shield2.png"), pygame.image.load("shield1.png"), pygame.image.load("shield.png")]
         self.image_cooldown =  [pygame.image.load("image\\pshield.png")]
-                           # pygame.image.load("pshield2.png"), pygame.image.load("pshield3.png"),
-                           # pygame.image.load("pshield4.png"), pygame.image.load("pshield5.png"),
-                           # pygame.image.load("pshield6.png"), pygame.image.load("pshield5.png"),
-                           # pygame.image.load("pshield4.png"), pygame.image.load("pshield3.png"), pygame.image.load("pshield2.png"), pygame.image.load("pshield.png")]
-
-
         self.current_image = 0
         self.image = self.image_list[self.current_image]
         self.cor = (30,pygame.display.Info().current_h-30)

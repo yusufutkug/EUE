@@ -2,7 +2,7 @@ import pygame
 
 #artış fonksiyon
 
-class Wallet(pygame.sprite.Sprite):
+class Wallet(Sprite):
 
  
     def __init__(self,all_sprite,screen,font):

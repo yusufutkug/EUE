@@ -7,7 +7,7 @@ class Group(object):
         self.lostsprites = []
         self.add(*sprites)
 
-    def sprites(self):
+    def __sprites(self):
 
         return list(self.spritedict)
 
@@ -25,8 +25,9 @@ class Group(object):
     def has_internal(self, sprite):
 
         return sprite in self.spritedict
-
-
+    
+    def __iter__(self):
+        return iter(self.__sprites())
    
 
     def __contains__(self, sprite):
@@ -102,12 +103,12 @@ class Group(object):
 
     def update(self, *args, **kwargs):
     
-        for sprite in self.sprites():
+        for sprite in self.__sprites():
             sprite.update(*args, **kwargs)
 
     def draw(self, surface):
 
-        sprites = self.sprites()
+        sprites = self.__sprites()
         if hasattr(surface, "blits"):
             self.spritedict.update(zip(sprites, surface.blits((spr.image, spr.rect) for spr in sprites if not spr.image==None)))
         else:

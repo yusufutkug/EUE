@@ -5,25 +5,30 @@ from Sprites import*
 class Drops(Sprite):
 
 
-    def __init__(self,pos,all_sprites,drop_sprite,hero_bullets,screen,firex) -> None:
+    def __init__(self,Health,screen,all_sprites,heroSprite,drop_sprite,hero_bullets) -> None:
         super(Drops,self).__init__(drop_sprite,all_sprites)
+        self.center=(-1000,-1000)
         self.hero_bullets=hero_bullets
+        self.hero=heroSprite
         self.image=pg.Surface((20,30),10)
         self.image.fill((255,0,0))
-        self.center=pos
         self.rect=self.image.get_rect(center=self.center)
         self.x=0
         self.screen=screen
         self.screenWidth=self.screen.get_width()
-        self.health=firex
+        self.health=Health
         self.effect=0
-        self.me="pass"
+        self.dropsound=pg.mixer.Sound("sound\\water_drop-6707.wav")
         
-    
+        
+
     def update(self,dt):
-        hero_bullet=self.spritecollide(self.hero_bullets,True)
+        hero_bullet=self.spritecollide(self.hero_bullets)
         for i in hero_bullet:
             self.health-=1
+        drop_Hero=self.spritecollide(self.hero)
+        if len(drop_Hero)==1:
+                self.to_effect(drop_Hero[0])
         if self.health<=0:
             self.kill()
         x=self.x
@@ -39,29 +44,38 @@ class Drops(Sprite):
             self.screenWidth=9999
         if self.center[1]-y>self.screen.get_height():
             self.kill()
-    
-    def get_effect(self):
-        return [self.me, self.effect]
 
+    def to_effect(self,hero):
 
+        self.kill()
+
+    def change_center(self,center):
+
+        self.center=center
     
 class Power_Upp(Drops):
 
 
-    def __init__(self, pos, all_sprites, drop_sprite,hero_bullets,screen,firex) -> None:
-        super(Power_Upp,self).__init__(pos, all_sprites, drop_sprite,hero_bullets,screen,firex)
+    def __init__(self, all_sprites, drop_sprite,hero_bullets,screen,firex,heroSprite) -> None:
+        super(Power_Upp,self).__init__( all_sprites, drop_sprite,hero_bullets,screen,firex,heroSprite)
         self.image=pg.image.load("image\\ammo.png")
         self.effect=1
-        self.me="power"
+    
+    def to_effect(self,hero):
+        self.dropsound.play()
+        hero.change_Firex()
+        self.kill()
 
 
 class Health_Upp(Drops):
 
 
-    def __init__(self, pos, all_sprites, drop_sprite,hero_bullets, screen,firex) -> None:
-        super().__init__(pos, all_sprites, drop_sprite,hero_bullets, screen,firex)
+    def __init__(self, all_sprites, drop_sprite,hero_bullets, screen,firex,heroSprite) -> None:
+        super().__init__( all_sprites, drop_sprite,hero_bullets, screen,firex,heroSprite)
         self.image=pg.image.load("image\\gear.png")
         self.effect=15
-        self.me="health"
 
-
+    def to_effect(self,hero):
+        self.dropsound.play()
+        hero.change_health(self.effect,1)
+        self.kill()

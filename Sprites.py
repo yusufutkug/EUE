@@ -55,20 +55,7 @@ class Sprite(object):
 
         return truth(self.__g)
 
-    def spritecollide(self, group, dokill):
+    def spritecollide(self, group):
    
         default_sprite_collide_func = self.rect.colliderect
-        if dokill:
-            crashed = []
-            append = crashed.append
-            for group_sprite in group.sprites():
-               
-                    if default_sprite_collide_func(group_sprite.rect):
-                        group_sprite.kill()
-                        append(group_sprite)
-            return crashed
-        return [
-            group_sprite
-            for group_sprite in group.sprites()
-            if default_sprite_collide_func(group_sprite.rect)
-        ]
+        return [group_sprite for group_sprite in group  if default_sprite_collide_func(group_sprite.rect) ]

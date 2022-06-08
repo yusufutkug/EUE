@@ -6,12 +6,12 @@ from Sprites import*
 class Item(Sprite):
 
 
-    def __init__(self,speed,all_sprites,items_sprite,screen,wallet):
+    def __init__(self,all_sprites,items_sprite,screen,game):
         super(Item, self).__init__(items_sprite,all_sprites)
+        self.EUE=game
         self.fee = 99999
         self.increase = 0
         self.all_sprites=all_sprites
-        self.wallet =wallet
         self.image=pg.image.load("image\\label1.png")
         self.rect=self.image.get_rect(topright=(screen.get_width(),100))
         self.name=None
@@ -20,20 +20,22 @@ class Item(Sprite):
         self.font1 = pg.font.SysFont('ocraextended',15)
         self.canbebought=False
 
-    def to_effect(self):
+    def to_effect(self,hero):
 
         pg.mixer.Sound("sound\\mixkit-arcade-video-game-bonus-2044.wav").play()
         
-    def trigger(self,Hero):
+    def trigger(self):
         if self.canbebought:
-            self.wallet.update_wallet(self.fee,-1)
-            self.to_effect(Hero)
+            objects=self.EUE.HereIsX(wallet=1,hero=1)
+            objects[0].update_wallet(self.fee,-1)
+            self.to_effect(objects[1])
             return True
         else:
             return False
 
     def Canbebought(self):
-        if self.wallet.Am_I_Rich(self.fee):
+        objects=self.EUE.HereIsX(wallet=1)
+        if objects[0].Am_I_Rich(self.fee):
             self.canbebought=True
         else:
             self.canbebought=False
@@ -58,8 +60,8 @@ class Item(Sprite):
 class Speed_of_Shooting(Item):
 
 
-        def __init__(self,speed,all_sprites,items_sprite,screen,wallet):
-            super(Speed_of_Shooting, self).__init__(speed,all_sprites,items_sprite,screen,wallet,)
+        def __init__(self,speed,all_sprites,items_sprite,screen,game):
+            super(Speed_of_Shooting, self).__init__(all_sprites,items_sprite,screen,game)
             self.fee = int(40*(speed**(1/2)))//10*10
             self.increase = 0.1
             self.rect=self.image.get_rect(topright=(screen.get_width(),70))
@@ -67,15 +69,15 @@ class Speed_of_Shooting(Item):
             self.canbebought=False
 
         def to_effect(self,Hero):
-             return super().to_effect()
+             super().to_effect(Hero)
              Hero.change_bulletTime(self.increase)
 
 
 class Shooting_Power(Item):
 
 
-        def __init__(self,speed,all_sprites,items_sprite,screen,wallet):
-            super(Shooting_Power, self).__init__(speed,all_sprites,items_sprite,screen,wallet)
+        def __init__(self,speed,all_sprites,items_sprite,screen,game):
+            super(Shooting_Power, self).__init__(all_sprites,items_sprite,screen,game)
             self.fee = int(40*(speed**(1/2)))//10*10
             self.increase = int(5*int(speed**(1/4)))
             self.rect=self.image.get_rect(topright=(screen.get_width(),144))
@@ -84,6 +86,6 @@ class Shooting_Power(Item):
             self.canbebought=False
         
         def to_effect(self,Hero):
-             return super().to_effect()
+             super().to_effect(Hero)
              Hero.change_bulletDamage(self.increase)
 

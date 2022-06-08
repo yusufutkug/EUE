@@ -3,22 +3,17 @@ from BULLET import *
 from Sprites import*
 class Heros(Sprite):
 
-
-    def __init__(self, pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops):
-        super(Heros, self).__init__(sprite_groups,all_sprites)
+    def __init__(self,window,all_sprites,hero_sprite,game):
+        super(Heros, self).__init__(hero_sprite,all_sprites)
+        self.EUE=game
         self.hero_death=False
-        self.cor=pos
-        self.image =pg.Surface((64,64))
+        self.cor=(window.get_width()//2-32,window.get_height()//2+32)
+        self.image =pg.Surface((32,64))
         self.image.fill((255,0,0))
         self.image_list=[self.image]
         self.current_image=0
         self.image = self.image_list[self.current_image]
         self.rect = self.image.get_rect(center=self.cor)
-        self.all_sprites = all_sprites
-        self.bullets = bullets
-        self.enemy_bullets=enemy_bullets
-        self.enemies=enemies
-        self.drops=drops
         self.cooldown_atack=4
         self.cooldown_defense=8
         self.bullet_timer = 1
@@ -38,10 +33,28 @@ class Heros(Sprite):
         self.laser_sound.set_volume(0.3)
         self.amIGhost=False
         self.firex=1
-        self.dropsound=pg.mixer.Sound("sound\\water_drop-6707.wav")
+        self.hero_index=0
         self.atack_skillsound=pg.mixer.Sound("sound\\magic-strike-5856.wav")
         self.defense_skillsound=pg.mixer.Sound("sound\\arcade-bleep-sound-6071.wav")
         self.gameoversound=pg.mixer.Sound("sound\\game-over-arcade-6435.wav")
+
+    def update(self, dt):
+
+        if self.health <= 0:
+            self.gameoversound.play()
+            self.kill()
+            self.hero_death=True
+        if not self.hero_death:
+            objects=self.EUE.HereIsX(enemy_bullets=1)
+            hits = self.spritecollide(objects[0])
+            for bullet in hits:
+                bullet.change_health(self.health)
+            self.move()
+            self.animation()
+            self.fire(dt,self.cor,self.firex)
+            self.healthbar(self.screen)
+            self.atack_skill(dt)
+            self.defense_skill(dt)
 
     def move(self):
 
@@ -54,8 +67,9 @@ class Heros(Sprite):
         self.bullet_timer -= dt 
         if self.bullet_timer <= 0 and mouse_pressed[0]:
             self.laser_sound.play()
-            if x%2==1:                
-                Bullet(cor, self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
+            objects=self.EUE.HereIsX(all_sprites=1,enemies_sprites=1,hero_bullets=1) 
+            if x%2==1:             
+                Bullet(cor, self.bullet_img,self.bullet_vel,self.bullet_damage, objects[0], objects[1],objects[2])
                 if not x==1:
                     self.fire(dt,cor,(x-1))
                 else:
@@ -65,44 +79,9 @@ class Heros(Sprite):
                 k=1/2
                 for i in range(1,x+1):
                     i=(i+1)//2
-                    Bullet((cor[0]+(i*k*distance),cor[1]), self.bullet_img,self.bullet_vel,self.bullet_damage, self.all_sprites, self.bullets)
+                    Bullet((cor[0]+(i*k*distance),cor[1]), self.bullet_img,self.bullet_vel,self.bullet_damage, objects[0], objects[1],objects[2])
                     self.bullet_timer = self.bullet_time  
-                    k*=-1
-                        
-
-    def update(self, dt):
-
-        if self.health <= 0:
-            self.gameoversound.play()
-            self.kill()
-            self.hero_death=True
-        if not self.hero_death:
-            if not self.amIGhost:
-                hero_bullet=self.spritecollide(self.enemy_bullets,True) 
-                enemy_Hero=self.spritecollide(self.enemies,True)
-                if len(hero_bullet)==1:
-                    self.health=hero_bullet[0].get_damage(self.health)
-                if len(enemy_Hero)==1:
-                    self.health=enemy_Hero[0].get_damage(self.health)  
-            drop_Hero=self.spritecollide(self.drops,True)
-            if len(drop_Hero)==1:
-                self.welcome_drop(drop_Hero[0].get_effect())
-            self.move()
-            self.animation()
-            self.fire(dt,self.cor,self.firex)
-            self.healthbar(self.screen)
-            self.atack_skill(dt)
-            self.defense_skill(dt)
-
-    def welcome_drop(self,list):
-        self.dropsound.play()
-        if list[0]=="power":
-            self.firex+=list[1]
-            if self.firex>5:
-                self.firex=5
-        else:
-            self.max_health+=list[1]
-            self.health=self.max_health
+                    k*=-1  
 
     def draw_hero(self,screen,font):
 
@@ -112,15 +91,6 @@ class Heros(Sprite):
         screen.blit(self.image,self.rect)
         self.animation()
         screen.blit(hero_name,hero_name_rect)
-
-
-    def __get_width(self):
-
-        return self.image.get_width()
-
-    def __get_height(self):
-
-        return self.image.get_height()
 
     def animation(self):
 
@@ -140,6 +110,14 @@ class Heros(Sprite):
         else:
             self.image.set_alpha(255)
         self.screen.blit(image,rect)
+
+    def __get_width(self):
+
+        return self.image.get_width()
+
+    def __get_height(self):
+
+        return self.image.get_height()
 
     def healthbar(self, window):
 
@@ -163,6 +141,22 @@ class Heros(Sprite):
 
         self.bullet_damage+=value
     
+    def change_Firex(self):
+
+        self.firex+=1
+        if self.firex>6:
+            self.firex=6
+
+    def change_health(self,value,effect=0):
+        if effect==1:
+            self.max_health+=value
+            self.health=self.max_health
+        else: 
+            if  not self.amIGhost:   
+                self.health-=value
+
+    
+    
     def active_defenseSkill(self):
         self.defense_skillsound.play()
         self.defenseSkill=True
@@ -171,18 +165,20 @@ class Heros(Sprite):
 
         self.atack_skillsound.play()
         self.atackSkill=True
+    
 
+    
 
 
 class Tank(Heros):
 
 
-    def __init__(self, pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops):
-        super(Tank, self).__init__( pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops)
+    def __init__(self,window, all_sprites, hero_sprites,game):
+        super(Tank, self).__init__( window, all_sprites, hero_sprites,game)
         self.image_list =[pg.image.load("image\\hr1.png"),pg.image.load("image\\hr4.png"),pg.image.load("image\\hr1.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr3.png"), pg.image.load("image\\hr2.png"), pg.image.load("image\\hr1.png")]
         self.current_image = 0
         self.image = self.image_list[self.current_image]
-        self.rect=self.image.get_rect(center=pos)
+        self.rect=self.image.get_rect(center=self.cor)
         self.bullet_time = 0.7
         self.health = 150
         self.max_health = 150
@@ -212,7 +208,8 @@ class Tank(Heros):
             bimage=image.copy()
             bimage.set_alpha(0)
             rect=image.get_rect(midbottom=(cor[0],cor[1]-32))
-            Bullet(cor,bimage,(0, -950),99999, self.all_sprites, self.bullets,9999)
+            objects=self.EUE.HereIsX(all_sprites=1,enemies_sprites=1,hero_bullets=1)           
+            Bullet(cor,bimage,(0, -950),99999, objects[0], objects[1],objects[2])
             image.fill((255,0,0))
             self.cooldown_atack+=(dt*40)
             self.screen.blit(image,rect)
@@ -226,14 +223,14 @@ class Tank(Heros):
 class Ghost(Heros):
 
 
-    def __init__(self,pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops):
-        super(Ghost, self).__init__( pos,window, all_sprites, bullets,sprite_groups,enemy_bullets,enemies,drops)
+    def __init__(self,window, all_sprites,hero_sprites,game):
+        super(Ghost, self).__init__( window, all_sprites, hero_sprites,game)
         self.image_list = [pg.image.load("image\\hero1.png"), pg.image.load("image\\hero2.png"), pg.image.load("image\\hero3.png"),
                            pg.image.load("image\\hero4.png"), pg.image.load("image\\hero3.png"), pg.image.load("image\\hero2.png"),
                            pg.image.load("image\\hero1.png")]
         self.current_image = 0
         self.image = self.image_list[self.current_image]
-        self.rect=self.image.get_rect(center=pos)
+        self.rect=self.image.get_rect(center=self.cor)
         self.bullet_time = 0.5
         self.health = 60
         self.max_health = 60

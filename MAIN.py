@@ -1,3 +1,4 @@
+from multiprocessing.context import set_spawning_popen
 import py
 import pygame as pg
 import  sys
@@ -32,24 +33,22 @@ class Game:
         self.coins=0
         self.bgspeed=0.4
         self.all_sprites = Group()
-        self.skills_sprite= Group()
-        self.enemies = Group()
+        self.skills_sprites = Group()
+        self.enemies_sprites = Group()
         self.hero_bullets = Group()
-        self.enemy_bullets =Group()
-        self.player = Group()
-        self.item_sprite =Group()
-        self.drops=Group()
-        #sor self.wallet
+        self.enemy_bullets = Group()
+        self.hero_sprite = Group()
+        self.items_sprites = Group()
+        self.drops_sprites = Group()
         self.heroList=Heros.__subclasses__()
-        self.Heroparemeters=[(self.__screen.get_width()//2-32,self.__screen.get_height()//2+32),self.__screen, self.all_sprites, self.hero_bullets,self.player,self.enemy_bullets,self.enemies,self.drops]
-        self.Hero=self.heroList[self.hero_index](self.Heroparemeters[0],self.Heroparemeters[1],self.Heroparemeters[2],self.Heroparemeters[3],self.Heroparemeters[4],self.Heroparemeters[5],self.Heroparemeters[6],self.Heroparemeters[7])
+        self.Hero=self.heroList[self.hero_index](self.__screen, self.all_sprites,self.hero_sprite,self)
         self.wallet = Wallet(self.all_sprites,self.__screen,self.font)
-        self.army=Army(self.all_sprites,self.enemy_bullets, self.enemies,self.__screen,self.hero_bullets,self.drops,self.wallet)
-        self.item1=Speed_of_Shooting(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen,self.wallet)
-        self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen,self.wallet)
-        self.atack_skill=atack_skill(self.all_sprites,self.skills_sprite)
-        self.defense_skill=defense_skill(self.all_sprites,self.skills_sprite)
-        
+        self.army=Army(self.all_sprites,self.__screen,self)
+        self.item1=Speed_of_Shooting(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self)
+        self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self)
+        self.atack_skill=atack_skill(self.all_sprites,self.skills_sprites)
+        self.defense_skill=defense_skill(self.all_sprites,self.skills_sprites)
+
 
     def entry_screen(self):
         pg.mixer.music.load(self.entryScreenMusic)
@@ -85,14 +84,14 @@ class Game:
                         self.hero_index-=1
                         if self.hero_index<-len(self.heroList):
                             self.hero_index=len(self.heroList)-1
-                        self.Hero=self.heroList[self.hero_index](self.Heroparemeters[0],self.Heroparemeters[1],self.Heroparemeters[2],self.Heroparemeters[3],self.Heroparemeters[4],self.Heroparemeters[5],self.Heroparemeters[6],self.Heroparemeters[7])
+                        self.Hero=self.heroList[self.hero_index](self.__screen, self.all_sprites,self.hero_sprite,self)
                     elif event.key == pg.K_LEFT:
                         self.Hero.kill()
                         self.hero_index+=1
                         if self.hero_index==len(self.heroList):
                             self.hero_index=-len(self.heroList)
-                        self.Hero =self.heroList[self.hero_index](self.Heroparemeters[0],self.Heroparemeters[1],self.Heroparemeters[2],self.Heroparemeters[3],self.Heroparemeters[4],self.Heroparemeters[5],self.Heroparemeters[6],self.Heroparemeters[7])
-                        print(self.player.sprites()) 
+                        self.Hero =self.heroList[self.hero_index](self.__screen, self.all_sprites,self.hero_sprite,self)
+                     
             self.update_background(self.bgspeed)
             for i,j in blit_list:
                 self.__screen.blit(i,j)
@@ -102,7 +101,7 @@ class Game:
     def run(self):
         pg.mixer.music.load(self.runMusic)
         pg.mixer.music.play()
-        while not self.Hero.hero_death:
+        while self.Hero.alive():
 
             if not pygame.mixer.music.get_busy():
                 pg.mixer.music.play()
@@ -135,7 +134,7 @@ class Game:
                     elif event.key==pg.K_1:
                         if self.item1.trigger(self.Hero):
                             self.item1.kill()
-                            self.item1=Speed_of_Shooting(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen,self.wallet)
+                            self.item1=Speed_of_Shooting(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self.wallet)
                         else:
                             self.buzzersound.set_volume(0.2)
                             self.buzzersound.play()
@@ -143,23 +142,21 @@ class Game:
                     elif event.key==pg.K_2:
                         if self.item2.trigger(self.Hero):
                             self.item2.kill()
-                            self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.item_sprite,self.__screen,self.wallet)
+                            self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self.wallet)
                         else:
                             self.buzzersound.set_volume(0.2)
                             self.buzzersound.play()
 
-    def update_score_coins(self):
+    def change_score(self,score):
 
-        self.score=self.army.send_score(self.score)
+        self.score+=score
         self.bgspeed=1+(self.score//10)**(1/2)
-        self.coins=self.army.send_coins(self.coins)
+   
   
     
     def run_logic(self, dt):
 
         self.all_sprites.update(dt)
-        self.update_score_coins()    
-        
 
     def update_background(self,speed:float):
         self.__screen.blit(self.__background, (0, self.__bgX))
@@ -192,6 +189,7 @@ class Game:
             return score
 
         return last
+    
     
     def pause(self):
         x=pg.mouse.get_pos()
@@ -253,11 +251,15 @@ class Game:
                     pg.mouse.set_visible(False  )
                     self.__init__()
                     self.entry_screen()
-                    
-                
-    
-    
 
+    def HereIsX(self,all_sprites=0,skills_sprites=0,enemies_sprites=0,hero_sprite=0,items_sprites=0,drops_sprites=0,hero_bullets=0,enemy_bullets=0,wallet =0,army=0,item1=0,item2=0,atack_skill=0,defense_skill=0,hero=0):
+        myList=[]
+        myDict={self.all_sprites:all_sprites,self.skills_sprites:skills_sprites,self.enemies_sprites:enemies_sprites,self.hero_sprite:hero_sprite,self.items_sprites:items_sprites,self.drops_sprites:drops_sprites,self.hero_bullets:hero_bullets,self.enemy_bullets:enemy_bullets,self.wallet:wallet ,self.army:army,self.item1:item1,self.item2:item2,self.atack_skill:atack_skill,self.defense_skill:defense_skill,self.Hero:hero}
+        for i, j in myDict.items():
+            if j:
+                myList.append(i)
+        return myList
+                
 
 
 if __name__ == '__main__':

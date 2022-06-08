@@ -132,17 +132,17 @@ class Game:
                         self.defense_skill.key_check(self.Hero)
                     
                     elif event.key==pg.K_1:
-                        if self.item1.trigger(self.Hero):
+                        if self.item1.trigger():
                             self.item1.kill()
-                            self.item1=Speed_of_Shooting(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self.wallet)
+                            self.item1=Speed_of_Shooting(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self)
                         else:
                             self.buzzersound.set_volume(0.2)
                             self.buzzersound.play()
                             
                     elif event.key==pg.K_2:
-                        if self.item2.trigger(self.Hero):
+                        if self.item2.trigger():
                             self.item2.kill()
-                            self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self.wallet)
+                            self.item2=Shooting_Power(self.bgspeed+0.6,self.all_sprites,self.items_sprites,self.__screen,self)
                         else:
                             self.buzzersound.set_volume(0.2)
                             self.buzzersound.play()

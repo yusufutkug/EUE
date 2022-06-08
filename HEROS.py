@@ -70,7 +70,7 @@ class Heros(Sprite):
             objects=self.EUE.HereIsX(all_sprites=1,enemies_sprites=1,hero_bullets=1) 
             if x%2==1:             
                 Bullet(cor, self.bullet_img,self.bullet_vel,self.bullet_damage, objects[0], objects[1],objects[2])
-                if not x==1:
+                if x!=1:
                     self.fire(dt,cor,(x-1))
                 else:
                     self.bullet_timer = self.bullet_time

@@ -1,6 +1,4 @@
-# project-part-3-group-4
-# FİNAL REPORT 
-## Group 4 - Endless Universe Expedition 
+Endless Universe Expedition 
 
 - Yusuf Utku Güldür - *2019402198*
 - Emel Yağan - *2019402066*

@@ -1,6 +1,12 @@
 Endless Universe Expedition 
 
 
+
+- Yusuf Utku Güldür - *2019402198*
+- Emel Yağan - *2019402066*
+- Eda Bitaraf - *2019402024*
+
+
 ![Entry](https://github.com/yusufutkug/EUE/blob/main/image/entry%20screen.png)
 
 

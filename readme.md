@@ -1,6 +1,16 @@
 Endless Universe Expedition 
 
+
+![Entry](https://github.com/yusufutkug/EUE/blob/main/image/entry%20screen.png)
+
+
+
+![Tank](https://github.com/yusufutkug/EUE/blob/main/image/game.png)
+
+
 ![Ghost](https://github.com/yusufutkug/EUE/blob/main/image/Ghost.png)
+
+
 ### Table of Contents 
 1. Game Description 
 

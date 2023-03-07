@@ -1,9 +1,6 @@
 Endless Universe Expedition 
 
-- Yusuf Utku Güldür - *2019402198*
-- Emel Yağan - *2019402066*
-- Eda Bitaraf - *2019402024*
-
+![Ghost](https://github.com/yusufutkug/EUE/blob/main/image/Ghost.png)
 ### Table of Contents 
 1. Game Description 
 
